@@ -1,0 +1,22 @@
+# Entorno virtual: se puede reconstruir instalando las dependencias.
+.venv/
+
+# Datos personales originales y preparados.
+data/
+
+# Credenciales y archivos locales de sesión.
+.env
+.env.*
+!.env.example
+.garminconnect/
+garmin_tokens.json
+oauth1_token.json
+oauth2_token.json
+
+# Archivos temporales generados por Python y Jupyter.
+__pycache__/
+*.pyc
+.ipynb_checkpoints/
+
+# Guia personal de aprendizaje
+GUIA_PASO_A_PASO.md
