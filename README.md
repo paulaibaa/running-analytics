@@ -1,217 +1,81 @@
 # Running Analytics
 
-Proyecto personal de aprendizaje de análisis de datos con entrenamientos reales
-de Garmin Connect. Combina extracción, preparación, exploración y un dashboard
-HTML local. Cada fila del historial preparado representa una actividad.
+Proyecto personal para analizar la evolución de entrenamientos reales de Garmin Connect: extracción, preparación, análisis con Python y dashboard HTML.
 
-## Demo y código
+[Demo pública](https://paulaibaa.github.io/running-analytics/) · [Instalación paso a paso](docs/INSTALACION.md)
 
-- [Repositorio](https://github.com/paulaibaa/running-analytics)
-- [Demo personal en GitHub Pages](https://paulaibaa.github.io/running-analytics/)
+Los datos y gráficos de la demo pertenecen a la autora. Para reproducir el proyecto, utiliza tu propia cuenta de Garmin. El HTML contiene datos que pueden copiarse y exportarse; no contiene credenciales de Garmin.
 
-La demo muestra los entrenamientos de la autora y permite consultar o exportar
-sus datos. Para reproducir el proyecto con otro historial, utiliza tu propia
-cuenta de Garmin. No se publican credenciales ni sesiones de Garmin.
+## Qué está implementado
 
-## Objetivo y preguntas
+- Descarga paginada del historial de running con la biblioteca no oficial `garminconnect`.
+- Conservación de originales JSON, preparación y validación de un CSV actual.
+- Registro de las fechas de inicio y fin de extracción, en UTC, junto al CSV.
+- Exploración, calidad y análisis descriptivo mediante notebooks.
+- Dashboard con filtros, volumen, frecuencia, distribuciones, pulso, técnica, objetivos, mejores tiempos e historial exportable.
 
-Analizar cómo evoluciona el entrenamiento de running:
+El análisis distingue exterior y cinta. Estudia volumen mensual y semanal, distancia y duración, grupos de distancia y contexto de ritmo, pulso y ascenso. Las comparaciones son descriptivas: no demuestran causalidad ni mejoras fisiológicas. El trabajo analítico está en pausa; no hay informe final cerrado, modelos predictivos, base de datos SQL ni asistente.
 
-- ¿Cómo cambian los kilómetros y la frecuencia por mes y semana?
-- ¿Cómo se distribuyen distancia y duración, y cómo evoluciona la duración?
-- ¿Qué diferencias descriptivas hay entre carreras cortas, medias y largas?
-- ¿Qué contexto aportan el año, las pulsaciones y el ascenso al interpretar el ritmo?
-- ¿Qué parte del volumen registrado corresponde a exterior y a cinta?
+## Archivos del proyecto
 
-El análisis no demuestra mejoras fisiológicas ni efectos causales. Los ritmos
-mensuales o las diferencias de pulsaciones no son, por sí solos, indicadores
-concluyentes de progreso. Las métricas opcionales pueden faltar según reloj,
-modalidad y periodo. Exterior y cinta se distinguen; la distancia en cinta se
-ajusta según su pantalla, conforme al procedimiento de la autora.
-
-## Qué funciona actualmente
-
-- Descarga paginada de actividades de running mediante el cliente no oficial
-  `garminconnect`, incluidas las modalidades que devuelve ese filtro.
-- Conservación de cada extracción original en un JSON fechado.
-- Selección de campos, limpieza de nombres, extracción de modalidad, conversión
-  de fecha local y cálculo de kilómetros, minutos y ritmo del cronómetro.
-- Comprobaciones de columnas, IDs, fechas y distancia/duración presentes y positivas.
-- Guardado temporal y comprobación de tamaño, columnas e IDs antes de reemplazar
-  `data/processed/running_preparado.csv`. No se comparan todas las celdas del CSV.
-- Regeneración del dashboard al terminar la actualización del CSV.
-- Notebooks de exploración, calidad y análisis descriptivo.
-
-No hay base de datos SQL, modelos predictivos ni asistente de entrenamiento.
-Tampoco hay un informe final cerrado con conclusiones ligado a una extracción.
-Estas partes no se presentan como entregables terminados.
-
-## Organización de archivos
-
-| Archivo o carpeta | Responsabilidad |
+| Archivo | Para qué sirve |
 |---|---|
-| `src/actualizar_running.py` | Flujo principal: conexión, extracción, originales, preparación, validación y regeneración del dashboard. |
-| `src/extraer_garmin.py` | Primera versión didáctica de extracción, conservada como referencia. Solo genera JSON: no es necesaria antes del actualizador. Se ejecuta directamente, no se importa como módulo. |
-| `src/generar_dashboard.py` | Genera el HTML desde el CSV preparado; no conecta con Garmin. Expone `generar_dashboard()` para el flujo principal y un comando independiente. |
-| `src/dashboard_template.html` | Código fuente de la interfaz. Contiene un marcador de datos, no el historial completo. Editar aquí para cambiar el diseño. |
-| `notebooks/01_exploracion_garmin.ipynb` | Conexión, muestra, estructura, diccionario de datos y selección inicial. Es exploración de aprendizaje. |
-| `notebooks/02_calidad_y_preparacion.ipynb` | Investigación y justificación de la preparación sobre una extracción histórica concreta. Sus rutas, ejemplos y cifras no se actualizan automáticamente. |
-| `notebooks/03_analisis_running.ipynb` | Análisis del CSV actual: volumen mensual/semanal, distribuciones, duración, grupos de distancia, pulso, ascenso y cinta. |
-| `data/raw/` | JSON originales locales, uno por extracción, y una muestra. |
-| `data/processed/running_preparado.csv` | Único historial preparado actual. Se reconstruye completo en cada actualización. |
-| `dashboard/running_dashboard.html` | Única salida HTML generada y actual para abrir o, si se decide, publicar. Contiene los datos incrustados. |
-| `docs/04_inspeccion_dashboard.md` | Inspección histórica previa del dashboard, no un informe actualizado. Puede mostrar cifras de una extracción anterior. |
-| `tests/test_actualizacion.py` | Pruebas locales de paginación y del flujo preparación → CSV → HTML, sin acceso a Garmin. |
-| `tests/verificar_dashboard.cjs` | Pruebas de cálculos e interacciones del HTML con un DOM simulado y datos incrustados. |
-| `requirements.txt` | Dependencias Python fijadas al entorno del proyecto. |
-| `.gitignore` | Excluye entorno, datos, entregables personales generados y archivos habituales de sesión. No elimina archivos de commits anteriores. |
+| `notebooks/01_exploracion_garmin.ipynb` | Aprender la conexión, explorar una muestra y documentar los campos. |
+| `notebooks/02_calidad_y_preparacion.ipynb` | Investigar calidad y justificar la preparación sobre una extracción histórica. |
+| `notebooks/03_analisis_running.ipynb` | Analizar el CSV preparado actual. Se actualiza reiniciando el kernel y ejecutando todas las celdas. |
+| `src/actualizar_running.py` | Descargar, conservar originales, preparar, validar y generar el dashboard. |
+| `src/extraer_garmin.py` | Extractor inicial didáctico; no hace falta ejecutarlo antes del actualizador. |
+| `src/generar_dashboard.py` | Generar el HTML desde el CSV, sin conectar con Garmin. |
+| `src/dashboard_template.html` | Plantilla de la interfaz; aquí se modifica el diseño. |
+| `data/raw/` | Originales JSON locales, uno por extracción. |
+| `data/processed/running_preparado.csv` | Historial preparado, reconstruido completo en cada actualización. |
+| `data/processed/running_preparado.metadata.json` | Fechas de extracción, nombres de archivos, número de actividades y huella del CSV. |
+| `dashboard/running_dashboard.html` | Dashboard local generado con los datos incrustados. |
+| `docs/index.html` | Copia elegida para GitHub Pages. |
+| `tests/` | Comprobaciones del flujo de actualización y las interacciones del dashboard. |
+| `requirements.txt` | Dependencias Python del proyecto. |
 
-La guía antigua `GUIA_PASO_A_PASO.md` se ha eliminado para reconstruirla en otra etapa.
-No es necesaria para ejecutar el proyecto.
+Los notebooks 01 y 02 conservan su propósito didáctico y no se ejecutan en cada actualización. La antigua guía se sustituyó por la [guía de instalación](docs/INSTALACION.md).
 
-## Instalación
+## Actualización habitual
 
-Entorno de desarrollo: Python 3.14 en Windows, VS Code y extensión Jupyter.
-Desde la raíz del proyecto:
-
-```powershell
-python -m venv .venv
-.\.venv\Scripts\Activate.ps1
-python -m pip install -r requirements.txt
-```
-
-Seleccionar `.venv` como kernel en los notebooks. Node.js solo es necesario para
-la prueba JavaScript; no para usar los scripts Python ni abrir el dashboard.
-Las versiones fijadas documentan el entorno utilizado, no compatibilidad con
-cualquier dispositivo, sistema o futura versión de Garmin.
-
-## Actualizar el historial y el dashboard
+Desde la raíz del proyecto, con el entorno activado:
 
 ```powershell
 python src/actualizar_running.py
 ```
 
-El programa pide las credenciales de la cuenta propia y, si Garmin lo requiere,
-el código de verificación. Descarga el historial completo, conserva el JSON,
-prepara el CSV y genera el HTML. No es una sincronización programada: hay que
-ejecutar el comando cuando se quiera actualizar.
+Actualiza los datos y `dashboard/running_dashboard.html`. Para hacer lo mismo **y copiar además el HTML a `docs/index.html`**, utiliza en su lugar:
 
-Abrir o recargar `dashboard/running_dashboard.html` después de terminar.
-Una pestaña abierta no vuelve a leer el CSV automáticamente. Para el análisis,
-reiniciar el kernel del notebook 03 y ejecutar todas sus celdas. No es necesario
-repetir los notebooks 01 y 02 ni ejecutar el extractor anterior.
+```powershell
+python src/actualizar_running.py --copiar-a-docs
+```
 
-Si falla la preparación, no se reemplaza el CSV anterior. Si falla después la
-regeneración del dashboard, el CSV puede estar actualizado y el HTML seguir
-siendo antiguo: el error se muestra y se puede regenerar por separado.
+Esta opción reemplaza la copia local de `docs/index.html`. No hace commit ni push: la web pública solo cambiará cuando publiques esos cambios en GitHub. No es necesario ejecutar ambos comandos.
 
-## Regenerar solo el dashboard
+Para regenerar únicamente el HTML desde el CSV existente:
 
 ```powershell
 python src/generar_dashboard.py
 ```
 
-También se pueden indicar archivos preparados compatibles:
+Después, recarga el HTML abierto. Los pasos y las métricas proceden del CSV preparado; el dashboard no consulta Garmin. Los objetivos creados en la página deben descargarse como JSON para conservarlos.
 
-```powershell
-python src/generar_dashboard.py --input data/processed/running_preparado.csv --output dashboard/running_dashboard.html
-```
+## Fechas y límites
 
-La fuente es el CSV preparado, no una exportación CSV directa de la web de Garmin.
-`steps` y las demás métricas proceden de los campos descargados de Garmin que
-conserva el actualizador. El dashboard no consulta la cuenta: el generador lee
-el CSV, convierte los valores e incrusta el resultado en el HTML. Los nulos se
-conservan; los valores no positivos de pulso, cadencia y zancada se tratan como
-ausentes en el generador.
+Los metadatos de extracción se crean desde la próxima descarga y se incrustan en el HTML si corresponden al mismo CSV. No se inventan fechas para archivos antiguos. La fecha de generación del HTML y la modificación del CSV son conceptos distintos. El notebook 03 conserva provisionalmente su criterio anterior basado en la modificación del CSV; no se ha cambiado durante la pausa analítica.
 
-Antes se generaban `running_dashboard.html` y `running_dashboard_v4.html` con
-contenido idéntico. Se ha retirado el alias `_v4`; solo se genera el primero.
-Los objetivos exportados se guardan por separado en JSON y pueden volver a
-cargarse en una nueva generación del dashboard.
+El HTML abre sin servidor, pero sus gráficos necesitan Internet para cargar Chart.js. Los valores ausentes no se interpretan como cero. Las comparaciones entre periodos dependen de su cobertura y de las métricas disponibles.
 
-## Dashboard: alcance y límites
+La [revisión visual](docs/REVISION_VISUAL.md) registra las comprobaciones de escritorio y las limitaciones observadas en móvil.
 
-La interfaz incluye Resumen, Análisis, Objetivos, Mejores tiempos e Historial:
+## Privacidad y comprobaciones
 
-- Filtros de periodo, modalidad y distancia; tablas y detalle de actividades.
-- Volumen, frecuencia, calendario y métricas disponibles de ritmo, pulso y técnica.
-- Comparación descriptiva con el periodo anterior cuando hay cobertura.
-- Mejores tramos Garmin y estimaciones identificadas desde sesiones cercanas
-  a una distancia; no son récords oficiales.
-- Creación, edición y exportación/importación de objetivos. Permanecen en memoria
-  al usar la página; deben descargarse para conservarlos tras cerrarla.
-- Exportación CSV de la selección. Publicar el HTML permite descargar sus datos.
-
-El ritmo global es tiempo total del cronómetro dividido entre distancia total.
-Las medias y sumas de métricas opcionales utilizan los valores presentes y muestran
-cobertura. Los ceros de periodos sin sesiones no equivalen a métricas ausentes.
-Los periodos iniciales/finales pueden ser parciales. Las zonas no incluyen límites
-fisiológicos inventados y el cociente ritmo/pulso no es una prueba validada de eficiencia.
-
-El archivo abre sin servidor. Los gráficos requieren conexión para cargar Chart.js
-4.4.8 desde un CDN; no es una aplicación completamente autónoma sin Internet.
-Sin esa biblioteca siguen disponibles las funciones que no dependen de sus gráficos.
-Los metadatos incrustados registran generación y modificación de la fuente.
-
-## Datos personales y credenciales
-
-Los ejemplos, resultados y gráficos pertenecen a la autora. Para replicar el método,
-cada persona debe utilizar su propia cuenta de Garmin y generar su historial.
-Las contraseñas se solicitan con `getpass`; no deben escribirse como literales,
-imprimirse ni guardarse en Git. Nunca publicar códigos de verificación ni tokens
-u otros archivos de sesión. La biblioteca es no oficial y puede dejar de funcionar
-si Garmin cambia sus servicios.
-
-Los JSON, CSV y HTML generados permanecen ignorados por Git. La plantilla HTML,
-el generador, las pruebas, notebooks y documentación son código fuente compartible
-tras su revisión. Una publicación del HTML generado es una decisión separada:
-contiene el historial y permite copiarlo. No existe protección que impida copiar
-los datos visibles de una página pública. El correo de autor de los commits se
-mantiene por decisión de la autora; no es una credencial de Garmin.
-
-El código, notebooks, README y dependencias se comparten en el repositorio.
-La demo pública es una copia explícita en `docs/index.html`. Los JSON y CSV
-completos de trabajo permanecen excluidos de Git; los registros incrustados en
-la demo sí se publican por decisión de la autora. No hay autenticación de Garmin
-en GitHub Pages: es una web estática.
-
-### Actualizar la demo publicada
-
-La actualización local regenera `dashboard/running_dashboard.html`. Para publicar
-esa nueva versión, revisarla y copiarla a la carpeta pública:
-
-```powershell
-Copy-Item dashboard/running_dashboard.html docs/index.html
-# Preparar, revisar y guardar la nueva instantánea pública.
-git add docs/index.html
-git commit -m "Actualiza la demo de running"
-git push
-```
-
-GitHub Pages publica la carpeta `/docs` de la rama `master`. La copia pública
-no cambia hasta realizar este paso; ejecutar Python localmente no publica datos
-por sí solo. `.nojekyll` permite servir el HTML estático sin procesamiento Jekyll.
-
-## Comprobaciones
+Los originales, CSV, entorno virtual y archivos de sesión están excluidos de Git. La copia de `docs/index.html` sí contiene el historial publicado. El correo y la contraseña de Garmin se solicitan al ejecutar el programa; no se escriben en el código ni en la documentación. Nunca publiques contraseñas, códigos de verificación ni tokens. El correo de autor de los commits es independiente del acceso a Garmin.
 
 ```powershell
 python -m unittest discover -s tests -p "test_*.py"
 node tests/verificar_dashboard.cjs
 ```
 
-Las pruebas Python usan archivos temporales. La prueba JavaScript lee el HTML
-generado y simula el DOM: valida cálculos, filtros, navegación, objetivos, detalle,
-exportación y configuración de gráficos. No sustituye una prueba visual real.
-En esta revisión no fue posible abrir archivos locales en el navegador integrado
-por su política de seguridad; la revisión visual actual queda pendiente.
-
-## Pendientes conocidos
-
-- Validación visual en navegador de escritorio y móvil antes de publicar el HTML.
-- Instalación y reproducción en un entorno nuevo; dependencias opcionales según Garmin.
-- Adaptar campos opcionales para otros relojes: la preparación exige los campos seleccionados.
-- Registrar explícitamente los metadatos de extracción; el notebook usa provisionalmente
-  la modificación del CSV para identificar el periodo semanal abierto.
-- Ampliar validaciones de datos y comprobación del contenido completo del CSV.
-- Preparar un informe de cierre si se quiere una entrega con respuestas sintetizadas.
-- Base de datos, modelos predictivos y asistente, solo como ampliaciones futuras.
+Las pruebas Python usan archivos temporales y no conectan con Garmin. Las de JavaScript simulan el DOM; complementan la revisión visual. La reproducción completa en una instalación nueva no se ha verificado.

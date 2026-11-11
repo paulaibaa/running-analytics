@@ -1,6 +1,7 @@
 """Genera el dashboard local posterior al notebook 03, sin conectar a Garmin."""
 import argparse
 import json
+import hashlib
 from datetime import datetime, timezone
 from pathlib import Path
 
@@ -72,6 +73,15 @@ def generar_dashboard(entrada=None, salida=None):
     records, meta = prepare(entrada)
     meta['generatedAt'] = datetime.now(timezone.utc).isoformat()
     meta['sourceModifiedAt'] = datetime.fromtimestamp(entrada.stat().st_mtime, timezone.utc).isoformat()
+    # Solo usamos fechas de extracción si los metadatos pertenecen a este CSV.
+    meta['extractionStartedAt'] = None
+    meta['extractionFinishedAt'] = None
+    ruta_metadatos = entrada.with_suffix('.metadata.json')
+    if ruta_metadatos.is_file():
+        datos = json.loads(ruta_metadatos.read_text(encoding='utf-8'))
+        if datos.get('csv_sha256') == hashlib.sha256(entrada.read_bytes()).hexdigest():
+            meta['extractionStartedAt'] = datos.get('extraction_started_at')
+            meta['extractionFinishedAt'] = datos.get('extraction_finished_at')
     template = (ROOT / 'src/dashboard_template.html').read_text(encoding='utf-8')
     # Impide que un nombre de actividad cierre el bloque <script> incrustado.
     payload = json.dumps({'meta': meta, 'activities': records}, ensure_ascii=False, allow_nan=False).replace('<', '\\u003c')

@@ -1,8 +1,11 @@
 # Permite guardar y leer los datos originales.
 import json
+import argparse
+import hashlib
+import shutil
 
 # Permite identificar cada extracción con su fecha y hora.
-from datetime import datetime
+from datetime import datetime, timezone
 
 # Permite introducir la contraseña sin mostrarla.
 from getpass import getpass
@@ -293,8 +296,48 @@ def guardar_preparado(df, carpeta_processed):
     return ruta_final
 
 
-# Ejecutamos el proceso cuando arrancamos directamente este archivo.
-if __name__ == "__main__":
+def copiar_a_docs(ruta_html, carpeta_docs):
+    """Prepara una copia local para Pages. No ejecuta Git ni publica."""
+    carpeta_docs.mkdir(parents=True, exist_ok=True)
+    destino = carpeta_docs / "index.html"
+    temporal = carpeta_docs / "index.html.tmp"
+    shutil.copyfile(ruta_html, temporal)
+    temporal.replace(destino)
+    (carpeta_docs / ".nojekyll").touch()
+    print("Copia local preparada en:", destino)
+    print("No se ha publicado nada. Revisa la copia antes de hacer commit y push.")
+    return destino
+
+
+def guardar_metadatos(ruta_csv, ruta_json, inicio, fin, n_actividades):
+    """Conserva cuándo se descargó el historial y a qué CSV corresponde."""
+    metadatos = {
+        "schema_version": 1,
+        "extraction_started_at": inicio.isoformat(),
+        "extraction_finished_at": fin.isoformat(),
+        "raw_file": ruta_json.name,
+        "prepared_file": ruta_csv.name,
+        "activities": n_actividades,
+        "csv_sha256": hashlib.sha256(ruta_csv.read_bytes()).hexdigest(),
+    }
+    destino = ruta_csv.with_suffix(".metadata.json")
+    temporal = destino.with_suffix(".json.tmp")
+    temporal.write_text(json.dumps(metadatos, ensure_ascii=False, indent=2), encoding="utf-8")
+    temporal.replace(destino)
+    return destino
+
+
+def leer_opciones(argv=None):
+    parser = argparse.ArgumentParser(description="Actualiza el historial y el dashboard local.")
+    parser.add_argument(
+        "--copiar-a-docs", action="store_true",
+        help="Copia también el dashboard a docs/index.html, sin commit ni push."
+    )
+    return parser.parse_args(argv)
+
+
+def main(argv=None):
+    opciones = leer_opciones(argv)
     # Calculamos las rutas desde la ubicación del script.
     raiz_proyecto = Path(__file__).resolve().parent.parent
     carpeta_raw = raiz_proyecto / "data" / "raw"
@@ -302,19 +345,30 @@ if __name__ == "__main__":
 
     # Conectamos y descargamos el historial.
     cliente = conectar_garmin()
+    inicio_extraccion = datetime.now(timezone.utc)
     carreras = extraer_carreras(cliente)
+    fin_extraccion = datetime.now(timezone.utc)
 
     # Conservamos los originales antes de preparar los datos.
-    guardar_original(carreras, carpeta_raw)
+    ruta_json = guardar_original(carreras, carpeta_raw)
 
     # Preparamos, validamos y guardamos el historial actualizado.
     df_preparado = preparar_carreras(carreras, columnas_conservar)
     ruta_csv = guardar_preparado(df_preparado, carpeta_processed)
+    guardar_metadatos(ruta_csv, ruta_json, inicio_extraccion, fin_extraccion, len(df_preparado))
 
     # Regeneramos el HTML tras guardar y verificar el historial preparado.
-    generar_dashboard(ruta_csv)
+    ruta_html = generar_dashboard(ruta_csv)
+
+    # Esta opción solo copia archivos locales. GitHub permanece sin cambios.
+    if opciones.copiar_a_docs:
+        copiar_a_docs(ruta_html, raiz_proyecto / "docs")
 
     print(
         "Actualización terminada. Filas y columnas:",
         df_preparado.shape
     )
+
+
+if __name__ == "__main__":
+    main()
