@@ -16,6 +16,9 @@ import pandas as pd
 # Permite conectarnos a Garmin.
 from garminconnect import Garmin
 
+# El dashboard utiliza el CSV preparado; no vuelve a consultar Garmin.
+from generar_dashboard import generar_dashboard
+
 
 # Campos que acordamos conservar durante la exploración.
 columnas_conservar = [
@@ -306,10 +309,12 @@ if __name__ == "__main__":
 
     # Preparamos, validamos y guardamos el historial actualizado.
     df_preparado = preparar_carreras(carreras, columnas_conservar)
-    guardar_preparado(df_preparado, carpeta_processed)
+    ruta_csv = guardar_preparado(df_preparado, carpeta_processed)
+
+    # Regeneramos el HTML tras guardar y verificar el historial preparado.
+    generar_dashboard(ruta_csv)
 
     print(
         "Actualización terminada. Filas y columnas:",
         df_preparado.shape
     )
-    

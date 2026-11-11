@@ -20,3 +20,7 @@ __pycache__/
 
 # Guia personal de aprendizaje
 GUIA_PASO_A_PASO.md
+
+# Entregables locales que contienen el historial personal incrustado.
+/dashboard/
+/docs/04_inspeccion_dashboard.md

@@ -1,0 +1,438 @@
+<!doctype html>
+<html lang="es" data-theme="light">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Running / Tu entrenamiento en perspectiva</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.8/dist/chart.umd.min.js"></script>
+<style>
+/* Paleta inspirada en la referencia: negro, blanco, hueso y lima. */
+:root{color-scheme:light;--bg:#eaecdf;--panel:#fff;--panel2:#f6f7f7;--line:#e0e3d8;--text:#10120d;--muted:#71776a;--accent:#c6ef4e;--teal:#45621b;--purple:#6b812f;--red:#b74336;--shadow:0 5px 20px #30382004}
+[data-theme=dark]{color-scheme:dark;--bg:#171b13;--panel:#23291f;--panel2:#2b3326;--line:#3a4433;--text:#f6f7ef;--muted:#b4bda7;--teal:#c6ef4e;--purple:#b7ce7c;--red:#ffaaa0}
+*{box-sizing:border-box}[hidden]{display:none!important}html{scroll-behavior:smooth}body{margin:0;background:var(--bg);color:var(--text);font:14px/1.5 'Bahnschrift','Trebuchet MS',Arial,sans-serif;background-image:linear-gradient(#81915a06 1px,transparent 1px),linear-gradient(90deg,#81915a06 1px,transparent 1px);background-size:22px 22px;padding:22px 25px 22px 202px}button,input,select,textarea{font:inherit;color:inherit}button,input,select,textarea{border:1px solid var(--line);border-radius:10px;background:var(--panel2);padding:9px 11px}button{cursor:pointer}button:hover{border-color:var(--purple)}button:disabled{opacity:.45;cursor:default}a{color:var(--teal)}:focus-visible{outline:2px solid var(--purple);outline-offset:3px}button[aria-pressed=true]{background:var(--accent);border-color:var(--accent);color:#111}header{display:flex;align-items:center;gap:15px;margin:0 auto 20px;max-width:1600px}.brand{font-size:23px;font-weight:750;letter-spacing:-1px}.brand b{display:none}.header-note{margin-left:auto;font-size:11px;color:var(--muted)}#theme{border-radius:25px;background:var(--panel);font-size:11px}main,footer{max-width:1600px;margin:auto}footer{padding:22px 0;color:var(--muted);font-size:10px}.sidebar{position:fixed;left:20px;top:20px;bottom:20px;width:155px;background:#090b08;border-radius:24px;padding:22px 10px;display:flex;flex-direction:column;gap:7px;z-index:30;color:white}.side-logo{display:flex;align-items:center;gap:8px;padding:0 9px 28px;font-size:13px;font-weight:700;letter-spacing:1px}.side-logo svg{width:30px;height:30px}.sidebar a{color:#aab09d;text-decoration:none;border-radius:12px;padding:13px 11px;display:flex;align-items:center;gap:10px;font-size:11px}.sidebar a span{font-size:17px;width:20px;text-align:center}.sidebar a[aria-current=page]{background:var(--accent);color:#111}.side-foot{margin-top:auto;color:#858c79;font-size:10px;padding:15px 10px}.version{display:inline-block;background:var(--panel);padding:4px 9px;border-radius:20px;margin-left:10px;font-size:10px;color:var(--muted);letter-spacing:0;vertical-align:middle}
+.filterbar{position:sticky;top:0;z-index:20;background:var(--bg);max-width:1600px;margin:0 auto 18px;padding:8px 0 10px}.filters{display:flex;flex-wrap:wrap;gap:10px;align-items:end}.field{display:flex;flex-direction:column;gap:5px}.field>label,.field>span,.year-label>span{font-size:9px;color:var(--muted);text-transform:uppercase;letter-spacing:1px}.year-label{display:flex;justify-content:space-between;gap:10px}.multi-choice{display:flex;align-items:center;gap:4px;color:var(--muted);font-size:9px}.multi-choice input{accent-color:#759c20;margin:0}.years{display:flex;gap:4px}.years button{padding:9px;font-size:11px;background:var(--panel)}input[type=date]{width:138px;background:var(--panel);font-size:11px}select{background:var(--panel);font-size:11px}.distance{min-width:180px;flex:1}.sliders{display:flex;align-items:center;gap:8px;padding-block:7px}.sliders input{width:85px;min-width:0;padding:0;accent-color:#89ad2e}.reset{font-size:10px;background:transparent;border:0}.quick{display:flex;flex-wrap:wrap;gap:5px;align-items:center;width:100%}.quick>span{font-size:9px;text-transform:uppercase;color:var(--muted);margin-right:5px}.quick button{border-radius:30px;padding:5px 11px;font-size:10px;background:var(--panel)}.quick button[aria-pressed=true],.years button[aria-pressed=true]{background:var(--accent);color:#111}
+h1,h2,h3,p{margin-top:0}h1{font-size:clamp(34px,3.7vw,54px);line-height:1.02;letter-spacing:-2px;margin-bottom:15px;font-weight:750}h2{font-size:24px;letter-spacing:-.8px;margin:0}h3{font-size:14px;font-weight:600;margin-bottom:8px}.eyebrow{font-size:9px;text-transform:uppercase;letter-spacing:1.5px;color:var(--muted);margin-bottom:10px}.muted,small{color:var(--muted)}.intro{display:grid;grid-template-columns:1fr 1fr;gap:25px;background:var(--panel);border:1px solid var(--line);border-radius:22px;padding:28px;margin-bottom:16px}.intro>div:first-child{background:var(--accent);color:#111;border-radius:15px;padding:25px;position:relative;overflow:hidden}.intro .eyebrow{color:#4c5a28}.intro h1 span{color:#111}.lead{font-size:12px;max-width:350px;color:#35431a}.badge{display:inline-block;background:#10120d;color:#fff;border-radius:25px;padding:7px 13px;font-size:10px}.intro #source{font-size:9px;color:#465329;margin-top:15px}.hero-visual{display:flex;flex-direction:column;justify-content:center;padding:10px}.hero-stats{display:flex;align-items:center;justify-content:space-between;gap:12px}.hero-distance{font-size:40px;letter-spacing:-1.7px;font-weight:650;line-height:1.15}.hero-distance small{font-size:14px;font-weight:400;letter-spacing:0}.hero-caption{font-size:9px;text-transform:uppercase;color:var(--muted);letter-spacing:1px;margin-top:7px}.consistency-ring{position:relative;width:112px;height:112px;flex-shrink:0}.consistency-ring svg{width:100%;height:100%;transform:rotate(-90deg)}.ring-text{position:absolute;inset:0;display:grid;place-content:center;text-align:center;font-size:25px;line-height:1.1;font-weight:650}.ring-text small{font-size:8px;font-weight:400;line-height:1.4;margin-top:6px}.hero-bars{display:flex;align-items:end;gap:6px;height:100px;margin-top:20px;border-bottom:1px solid var(--line)}.hero-bar{height:100%;flex:1;display:flex;align-items:end;min-width:0}.hero-bar i{height:var(--height);min-height:2px;width:100%;display:block;background:var(--accent);border-radius:5px 5px 0 0}.hero-bar:last-child i{background:#10120d}.hero-months{display:flex;justify-content:space-between;font-size:9px;color:var(--muted);margin-top:8px}.notice{border:1px solid var(--line);background:var(--panel);border-radius:12px;padding:10px 14px;color:var(--muted);font-size:10px;margin:10px 0}.mode-note{font-size:10px;color:var(--muted);margin:12px 0}.availability{display:flex;flex-wrap:wrap;gap:6px;margin:14px 0}.availability span{font-size:9px;background:var(--panel);border:1px solid var(--line);border-radius:25px;padding:4px 8px}.section-head{display:flex;justify-content:space-between;align-items:center;gap:15px;margin:28px 0 16px}.section-head p{color:var(--muted);font-size:11px;margin:5px 0 0}.kpis{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:11px}.kpi,.card{border:1px solid var(--line);background:var(--panel);border-radius:18px;box-shadow:var(--shadow);min-width:0}.kpi{padding:16px;overflow:hidden}.kpi-top{display:flex;align-items:center;justify-content:space-between;gap:5px}.kpi-label{font-size:10px;color:var(--muted)}.kpi-icon{font-size:16px;color:var(--purple)}.kpi-value{font-size:25px;letter-spacing:-1px;font-weight:650;margin:12px 0 6px;white-space:nowrap}.delta{font-size:9px;color:var(--muted);min-height:25px}.good{color:var(--teal)}.bad{color:var(--red)}.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}.card{padding:22px}.card p{font-size:11px;color:var(--muted);line-height:1.65;margin-bottom:16px}.plot{height:280px;position:relative}.wide{grid-column:1/-1}.empty{padding:30px;color:var(--muted);text-align:center;font-size:12px}.heat-year{display:flex;gap:12px;margin:20px 0}.heat-year>b{font-size:11px;min-width:35px}.heat-scroll{flex:1;overflow:auto}.heat{display:grid;grid-auto-flow:column;grid-template-rows:repeat(7,11px);grid-auto-columns:11px;gap:3px;min-width:740px}.day{width:11px;height:11px;padding:0;border:1px solid var(--line);border-radius:3px;background:var(--panel2)}.day[data-level="1"]{background:#e5efc8}.day[data-level="2"]{background:#c6ef4e}.day[data-level="3"]{background:#9cc12d}.day[data-level="4"]{background:#42611b}.pad{visibility:hidden}.heat-legend{display:flex;gap:6px;align-items:center;color:var(--muted);font-size:9px}.records{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px}.record{border:1px solid var(--line);border-radius:16px;padding:22px;background:var(--panel2)}.record>span{font-size:12px;font-weight:650}.record strong{display:block;font-size:30px;letter-spacing:-1px;margin:14px 0 8px}.record small{display:block;font-size:10px;margin-top:4px}.record button{font-size:10px;border-radius:25px;background:#111;color:white;margin-top:15px}.record .method-tag{display:inline-block;background:var(--panel);padding:4px 7px;border-radius:20px;font-size:9px;color:var(--text);margin-bottom:10px}.tops{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px}.tops ol{font-size:11px;padding-left:20px}.tops li{padding:9px 0;border-bottom:1px solid var(--line)}.tops li::marker{font-weight:700;color:var(--purple)}.insights{list-style:none;padding:0;display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin:0}.insights li{background:var(--panel2);border-radius:12px;padding:15px;font-size:11px}.insights li:before{content:'↗';font-size:17px;margin-right:8px;color:var(--purple)}.table-wrap{overflow:auto}table{width:100%;border-collapse:collapse;white-space:nowrap;font-size:11px}th,td{padding:12px 10px;text-align:left;border-bottom:1px solid var(--line)}th{background:var(--panel2);color:var(--muted);font-weight:400}th button{border:0;background:none;padding:0;color:inherit}tbody tr[data-id]{cursor:pointer}tbody tr[data-id]:hover{background:var(--panel2)}.toolbar,.pagination{display:flex;justify-content:space-between;align-items:center;gap:12px;margin:12px 0}.toolbar input{width:min(350px,100%)}.pagination{color:var(--muted);font-size:10px}.pagination button{font-size:10px}.black-button,#export{background:#10120d;color:#fff;border-radius:25px;border:0;padding:10px 16px;font-size:11px}.black-button:hover,#export:hover{background:#38431f}details{margin-top:16px}summary{font-size:11px;cursor:pointer;color:var(--teal)}dialog{background:var(--panel);color:var(--text);border:1px solid var(--line);border-radius:20px;width:min(800px,92vw);max-height:85vh;padding:25px}dialog::backdrop{background:#0007}.dialog-head{display:flex;justify-content:space-between;gap:12px;align-items:center}dialog dl{display:grid;grid-template-columns:1fr 1fr;gap:12px}dialog dt{font-size:11px;color:var(--muted);overflow-wrap:anywhere}dialog dd{margin:0;font-size:12px;overflow-wrap:anywhere}#chartWarning{display:none}.goals-layout{display:grid;grid-template-columns:340px 1fr;gap:16px;align-items:start}.goal-form{display:flex;flex-direction:column;gap:12px}.goal-form label{display:flex;flex-direction:column;gap:5px;font-size:11px;color:var(--muted)}.goal-form input,.goal-form select{width:100%;font-size:12px}.goal-dates{display:grid;grid-template-columns:1fr 1fr;gap:10px}.goal-card{margin-bottom:12px}.goal-card .goal-meta{display:flex;justify-content:space-between;gap:10px;color:var(--muted);font-size:10px}.goal-number{font-size:28px;font-weight:650;letter-spacing:-1px;margin:15px 0 10px}.progress-track{height:9px;border-radius:10px;background:var(--line);overflow:hidden}.progress-track i{height:100%;display:block;background:var(--accent);border-radius:10px}.goal-actions{display:flex;gap:6px;margin-top:15px}.goal-actions button{font-size:10px;border-radius:20px}.goal-tools{display:flex;flex-wrap:wrap;gap:8px;align-items:center}.file-label{cursor:pointer;border:1px solid var(--line);padding:9px 13px;background:var(--panel);border-radius:25px;font-size:11px}.goal-banner{background:var(--accent);color:#111;border-radius:18px;padding:24px;margin-bottom:16px}.goal-banner h2{font-size:30px;max-width:370px}.goal-banner p{font-size:12px;color:#3f4a28;margin:10px 0 0}.page-heading{margin:20px 0 22px}.page-heading h1{font-size:36px;margin-bottom:9px}.page-heading p{font-size:12px;color:var(--muted)}
+@media(min-width:1200px){#volumeCharts>.card:first-child{grid-column:1/-1}}
+@media(max-width:1150px){body{padding-left:107px}.sidebar{width:65px;padding-inline:7px}.side-logo{padding:0 10px 25px}.side-logo b,.sidebar a em,.side-foot{display:none}.sidebar a{justify-content:center;padding:13px}.sidebar a span{font-size:20px}.kpis{grid-template-columns:repeat(3,1fr)}.records{grid-template-columns:repeat(3,1fr)}.goals-layout{grid-template-columns:300px 1fr}.intro{gap:16px;padding:18px}.intro>div:first-child{padding:20px}.hero-distance{font-size:32px}}
+@media(max-width:780px){body{padding:15px 15px 100px}.sidebar{left:12px;right:12px;top:auto;bottom:10px;width:auto;height:66px;flex-direction:row;align-items:center;justify-content:space-around;padding:6px;border-radius:20px}.side-logo,.side-foot{display:none}.sidebar a{flex-direction:column;gap:2px;font-size:8px;padding:6px 9px;border-radius:12px}.sidebar a em{display:block;font-style:normal;font-size:8px}.sidebar a span{font-size:18px}.header-note{display:none}.brand{font-size:20px}.version{font-size:8px}.filterbar{padding-top:5px}.filters{gap:8px;max-height:39vh;overflow-y:auto}.field{flex:1}.filters>.field:first-child{flex-basis:100%}.year-label{justify-content:start;gap:12px}.years{flex-wrap:wrap}.years button{padding:7px 12px}.field input[type=date]{width:100%}.distance{min-width:170px}.intro{grid-template-columns:1fr}.intro h1{font-size:39px}.hero-visual{padding:8px}.hero-bars{height:65px}.grid,.insights,.goals-layout{grid-template-columns:1fr}.kpis{grid-template-columns:repeat(2,1fr)}.records{grid-template-columns:repeat(2,minmax(0,1fr))}.tops{grid-template-columns:1fr}.kpi-value{font-size:23px}.kpi{padding:14px}.card{padding:17px}.plot{height:250px}.quick button{padding:4px 9px;font-size:9px}.section-head{flex-wrap:wrap}.record{padding:16px}.record strong{font-size:25px}.page-heading h1{font-size:30px}.toolbar{flex-wrap:wrap}dialog dl{grid-template-columns:1fr}}
+@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+.sidebar a em{font-style:normal}.goal-tools #goalStatus{font-size:11px}
+/* Filtros comunes a todas las páginas: grupos claros y tipografía más legible. */
+body{font-size:15px;letter-spacing:.05px;background-image:none}.sidebar a{font-size:12px}h1,h2,.brand{font-weight:650;letter-spacing:-.7px}.kpi-value{font-weight:600;font-variant-numeric:tabular-nums}.kpi:nth-child(3) .kpi-value{font-size:clamp(18px,1.65vw,25px)}
+.filterbar{padding:14px 18px 12px;background:var(--panel);border:1px solid var(--line);border-radius:18px;box-shadow:0 5px 20px #26302006;top:8px;margin-bottom:24px}.filter-heading{display:flex;justify-content:space-between;align-items:center;gap:15px;border-bottom:1px solid var(--line);padding-bottom:10px;margin-bottom:12px;font-size:12px;font-weight:600}.filter-heading #filterSummary{font-size:10px;color:var(--muted);font-weight:400}.filters{gap:12px 16px}.field{gap:7px}.field>label,.field>span,.year-label>span{font-size:10px;text-transform:none;letter-spacing:0;color:var(--muted);font-weight:500}.years{padding:3px;border:1px solid var(--line);border-radius:11px;background:var(--panel2);gap:2px}.years button{border:0;background:transparent;border-radius:8px;font-size:12px;padding:8px 10px}.years button[aria-pressed=true]{background:var(--accent);box-shadow:0 2px 5px #3140170a}.multi-choice{font-size:10px}.field select,.field input[type=date]{font-size:12px;min-height:37px;border-radius:10px;background:var(--panel2)}.quick{border-top:1px solid var(--line);padding-top:11px;gap:6px}.quick>span{font-size:10px;text-transform:none}.quick button{font-size:11px;padding:5px 12px;background:var(--panel2);border-color:transparent}.reset{background:var(--panel2);border:1px solid var(--line);border-radius:10px;min-height:37px;font-size:11px}.sliders{gap:10px}.distance{min-width:180px}.chart-scroll{overflow-x:auto;overflow-y:hidden}.monthly-card{scrollbar-width:thin}.card #weekPicker{width:100%;margin-bottom:12px;font-size:12px}.card p{font-size:12px}.goal-card .race-tag{font-size:10px;color:var(--teal)}.race-empty{border:1px dashed var(--line);border-radius:14px;padding:22px;color:var(--muted);font-size:12px}
+@media(max-width:780px){.filterbar{padding:12px;top:4px;border-radius:14px}.filter-heading{font-size:11px;flex-wrap:wrap;gap:4px}.filters{gap:10px}.filter-heading #filterSummary{font-size:9px}.years button{font-size:11px;padding:7px 10px}.field input[type=date]{min-width:120px}.kpi:nth-child(3) .kpi-value{font-size:20px}.quick button{font-size:10px}}
+/* Tarjetas neutras; verde solo al interactuar, también con teclado. */
+.kpi,.record,.goal-card,.insights li{transition:background-color .18s ease,border-color .18s ease}.kpi,.record,.goal-card{background:var(--panel)}
+.intro>div:first-child,.goal-banner{background:var(--panel2);color:var(--text)}.intro h1 span{color:var(--text)}.intro .eyebrow,.intro #source,.intro .lead,.goal-banner p{color:var(--muted)}
+@media(hover:hover){.intro>div:first-child:hover,.goal-banner:hover,.tops>.card:hover{background:#c6ef4e;color:#111}.intro>div:first-child:hover h1 span{color:#111}.intro>div:first-child:hover .lead,.intro>div:first-child:hover .eyebrow,.intro>div:first-child:hover #source,.goal-banner:hover p,.tops>.card:hover small{color:#3f4e21}}
+@media(hover:hover){.kpi:hover,.record:hover,.goal-card:hover,.insights li:hover{background:#c6ef4e;color:#111;border-color:#b5d846}.kpi:hover .kpi-label,.kpi:hover .delta,.record:hover small,.goal-card:hover p,.goal-card:hover .goal-meta{color:#3f4e21}.record:hover .method-tag{background:#ffffffb3;color:#111}.kpi:hover .kpi-icon{color:#45621b}}
+.record:focus-within,.goal-card:focus-within{outline:2px solid var(--purple);outline-offset:2px}
+.filterbar{position:relative;top:auto;z-index:1}
+.chart-stats{display:flex;flex-wrap:wrap;gap:7px;margin:0 0 12px;font-size:10px;color:var(--muted)}.chart-stats span{background:var(--panel2);border-radius:20px;padding:5px 9px}.chart-stats .chart-peak{color:var(--teal)}
+@media(prefers-reduced-motion:reduce){.kpi,.record,.goal-card,.insights li{transition:none}}
+</style>
+</head>
+<body>
+<aside class="sidebar"><div class="side-logo"><svg viewBox="0 0 32 32" aria-hidden="true"><circle cx="16" cy="16" r="12" fill="none" stroke="#c6ef4e" stroke-width="2.5" stroke-dasharray="60 16"/></svg><b>RUN / LAB</b></div><nav id="pageNav" aria-label="Páginas">
+<a href="#resumen" data-route="resumen" aria-current="page"><span>⌂</span><em>Resumen</em></a><a href="#analisis" data-route="analisis"><span>▥</span><em>Análisis</em></a><a href="#objetivos" data-route="objetivos"><span>◎</span><em>Objetivos</em></a><a href="#marcas" data-route="marcas"><span>♧</span><em>Mejores tiempos</em></a><a href="#historial" data-route="historial"><span>☷</span><em>Historial</em></a>
+</nav></aside>
+<header><div class="brand"><b>↗</b> <span id="pageTitle">Resumen</span></div><span class="header-note">Tu progreso, en perspectiva</span><button id="theme" aria-pressed="false">☾ Modo oscuro</button></header>
+<div class="filterbar"><div class="filter-heading"><span>◈ &nbsp; Tu selección</span><span id="filterSummary"></span></div><div class="filters">
+ <div class="field"><div class="year-label"><span>Año</span></div><div id="years" class="years" role="group" aria-label="Años"></div></div>
+ <div class="field"><label for="type">Modalidad</label><select id="type"></select></div>
+ <div class="field"><label for="from">Desde</label><input id="from" type="date"></div>
+ <div class="field"><label for="to">Hasta</label><input id="to" type="date"></div>
+ <div class="field distance"><span id="distanceLabel">Distancia</span><div class="sliders"><input id="minDist" type="range" min="0" step="0.01" aria-label="Distancia mínima"><input id="maxDist" type="range" min="0" step="0.01" aria-label="Distancia máxima"></div></div>
+ <button id="reset" class="reset">↺ Resetear filtros</button>
+ <div class="quick" id="quick"><span class="muted">Distancia rápida</span></div>
+</div></div>
+<main>
+<div class="notice" id="dataOwnership">Los datos y gráficos mostrados pertenecen al historial personal de la autora. Para replicar el proyecto, genera tus datos desde tu propia cuenta de Garmin. Este HTML contiene el historial incrustado: compartirlo permite copiar sus datos. No contiene credenciales de Garmin.</div>
+<section data-view="resumen" id="view-resumen"> <div class="intro"><div><div class="eyebrow">Tu diario de running / Garmin</div><h1>Cada carrera.<br><span>Un paso más.</span></h1><p class="lead">La constancia se construye salida a salida.<br>Explora tu volumen, tu ritmo y todo lo que hay detrás.</p><span class="badge" id="scope"></span><div id="source"></div></div><div class="hero-visual" id="heroVisual" aria-live="polite"></div></div>
+ <div id="filterError" role="status" class="notice" hidden></div>
+ <div class="mode-note" id="modeNote"></div>
+ <div id="comparison" class="notice"></div>
+ <div class="kpis" id="kpis" aria-live="polite"></div>
+ <div class="availability" id="availability"></div>
+ <div class="notice" id="chartWarning" role="alert">No se pudo cargar Chart.js. Los filtros, KPIs, calendario, récords, tabla y exportación siguen funcionando. Los gráficos requieren conexión al CDN.</div>
+ <div class="card" style="margin-top:16px"><h3>Lo que cuentan los datos</h3><p>Observaciones automáticas sobre la selección actual; no demuestran cambios de condición física.</p><ul id="insights" class="insights"></ul></div>
+</section><section data-view="analisis" id="view-analisis" hidden> <div class="section-head" id="volumen"><div><div class="eyebrow">01 / Construye la base</div><h2>Volumen y constancia</h2><p>Tu entrenamiento, del día a día a la perspectiva anual.</p></div></div>
+ <div class="grid" id="volumeCharts"></div>
+ <div class="card" style="margin-top:16px"><h3>Calendario de actividad</h3><p>Un cuadrado por día · lunes a domingo · color según kilómetros. Pasa el cursor o enfoca un día para consultar su detalle.</p><div id="heatmap"></div><div class="heat-legend">Menos <span class="day" data-level="1"></span><span class="day" data-level="2"></span><span class="day" data-level="3"></span><span class="day" data-level="4"></span> Más · 0 / &lt;5 / 5–10 / 10–20 / ≥20 km</div></div>
+ <div class="section-head" id="ritmo"><div><div class="eyebrow">02 / Encuentra tu ritmo</div><h2>Ritmo y respuesta</h2><p>Relaciones descriptivas: el recorrido, la sesión y el reloj también influyen.</p></div></div>
+ <div class="grid" id="responseCharts"></div>
+ <div class="section-head" id="tecnica"><div><div class="eyebrow">03 / Mira más allá de los kilómetros</div><h2>Técnica y esfuerzo</h2><p>Distancia, desnivel y dinámica de carrera. Solo mediciones disponibles.</p></div></div>
+ <div class="grid" id="detailCharts"></div>
+</section><section data-view="objetivos" id="view-objetivos" hidden>
+<div class="page-heading"><div class="eyebrow">Tu próximo paso</div><h1>Objetivos que te mueven.</h1><p>Define tu reto y sigue el avance con tus actividades reales.</p></div>
+<div class="goal-tools"><button class="black-button" id="saveGoals">↓ Guardar objetivos</button><label class="file-label">↑ Cargar objetivos<input id="loadGoals" type="file" accept=".json,application/json" hidden></label><span id="goalStatus" class="muted" role="status"></span></div>
+<div class="notice">Los objetivos se mantienen mientras esta página esté abierta. Pulsa «Guardar objetivos» para conservarlos en un archivo y «Cargar objetivos» para recuperarlos. Su progreso usa su propio periodo y modalidad, independientemente de los filtros superiores.</div>
+<div class="goals-layout"><div><div class="goal-banner"><h2>Un reto.<br>Tu siguiente versión.</h2><p>Pequeños pasos, grandes recorridos.</p></div><form id="goalForm" class="card goal-form">
+<h3 id="goalFormTitle">Nuevo objetivo</h3><input id="goalId" type="hidden">
+<label>Nombre del objetivo<input id="goalName" required maxlength="100" placeholder="Mi reto de este mes"></label>
+<label>Qué quieres conseguir<select id="goalMetric"><option value="km">Acumular kilómetros</option><option value="runs">Completar carreras</option><option value="longest">Alcanzar una distancia en una sesión</option><option value="time">Mejorar un tiempo por distancia</option><option value="race">Futura carrera</option></select></label>
+<label id="targetLabel">Meta (km)<input id="goalTarget" type="number" min="0.01" step="0.01" required placeholder="100"></label>
+<label id="goalTimeLabel" hidden><span id="goalTimeText">Tiempo objetivo (h:mm:ss)</span><input id="goalTime" placeholder="0:25:00" pattern="[0-9]+:[0-5][0-9]:[0-5][0-9]"></label>
+<label id="raceLocationLabel" hidden>Lugar de la carrera (opcional)<input id="raceLocation" maxlength="120" placeholder="Ciudad o recorrido"></label><label>Modalidad<select id="goalType"><option value="all">Todas</option></select></label>
+<div class="goal-dates"><label>Desde<input id="goalFrom" type="date" required></label><label><span id="goalToText">Hasta</span><input id="goalTo" type="date" required></label></div>
+<button class="black-button" type="submit" id="goalSubmit">+ Crear objetivo</button><button id="cancelGoal" type="button" hidden>Cancelar edición</button><p id="goalError" role="alert"></p>
+</form></div><div><div class="section-head"><h2>Futuras carreras</h2><button id="newRace" class="black-button" type="button">+ Añadir carrera</button></div><div id="raceList" aria-live="polite"></div><div class="section-head"><h2>Otros objetivos</h2></div><div id="goalList" aria-live="polite"></div></div></div>
+</section><section data-view="marcas" id="view-marcas" hidden> <div class="section-head" id="referencias"><div><div class="eyebrow">04 / Sesiones que destacan</div><h2>Mejores tiempos</h2><p>Estimaciones por distancia, mejores sesiones e ideas para explorar.</p></div></div>
+ <div class="card"><h3>Tu mejor marca en cada distancia</h3><p id="recordNote"></p><div id="records" class="records"></div></div>
+ <div class="tops" id="tops" style="margin-top:16px"></div>
+</section><section data-view="historial" id="view-historial" hidden> <div class="section-head" id="historial"><div><div class="eyebrow">05 / Cada salida tiene su historia</div><h2>Historial de carreras</h2><p>Ordena cualquier columna, busca y abre una sesión para ver todas sus métricas.</p></div><button id="export">↓ Exportar selección a CSV</button></div>
+ <div class="card"><div class="toolbar"><input id="search" type="search" aria-label="Buscar carreras" placeholder="Buscar nombre, fecha o modalidad…"><label>Filas <select id="pageSize"><option>10</option><option>25</option><option>50</option></select></label></div><div class="table-wrap"><table><thead><tr id="tableHead"></tr></thead><tbody id="tableBody"></tbody></table></div><div class="pagination"><span id="pageInfo" aria-live="polite"></span><div><button id="prev">← Anterior</button> <button id="next">Siguiente →</button></div></div></div>
+ <details class="card"><summary>Método, disponibilidad y unidades</summary><div id="method"></div></details>
+</section></main>
+
+<dialog id="detail"><div class="dialog-head"><h2 id="detailTitle"></h2><button id="closeDetail" aria-label="Cerrar detalle">✕</button></div><dl id="detailData"></dl></dialog>
+<script id="running-data" type="application/json">__RUNNING_DATA__</script>
+<script>
+'use strict';
+// 1. Datos y utilidades. Las fechas se conservan en la hora local registrada por Garmin.
+const payload=JSON.parse(document.getElementById('running-data').textContent);
+const DATA=payload.activities, META=payload.meta, $=id=>document.getElementById(id);
+const COLORS=['#7e9d25','#171c12','#a9bc74','#b79b62','#729b91','#929b7e'];
+const TYPES={running:'Exterior',treadmill_running:'Cinta',trail_running:'Trail',track_running:'Pista',indoor_running:'Interior',ultra_run:'Ultra',virtual_run:'Virtual',street_running:'Urbana'};
+const finite=x=>typeof x==='number'&&Number.isFinite(x);
+const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const num=(v,n=1)=>finite(v)?v.toLocaleString('es-ES',{minimumFractionDigits:n,maximumFractionDigits:n}):'—';
+const pace=v=>{if(!finite(v)||v<=0)return '—';const s=Math.round(v);return `${Math.floor(s/60)}:${String(s%60).padStart(2,'0')}`;};
+const time=v=>{if(!finite(v))return '—';const s=Math.round(v);return `${Math.floor(s/3600)}:${String(Math.floor(s%3600/60)).padStart(2,'0')}:${String(s%60).padStart(2,'0')}`;};
+const durationWords=v=>{if(!finite(v))return '—';const minutes=Math.floor(v/60);return `${Math.floor(minutes/60)} h ${minutes%60} min`;};
+const date=s=>new Date(s+'T12:00:00'), key=d=>`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+const dayKey=r=>r.fecha_local.slice(0,10), year=r=>r.fecha_local.slice(0,4), add=(s,n)=>{const d=date(s);d.setDate(d.getDate()+n);return key(d);};
+const days=(a,b)=>Math.round((Date.parse(a+'T00:00:00Z')-Date.parse(b+'T00:00:00Z'))/86400000);
+const valid=(rows,k)=>rows.filter(r=>finite(r[k]));
+const sum=(rows,k)=>{const a=valid(rows,k);return a.length?a.reduce((s,r)=>s+r[k],0):null;};
+const avg=(rows,k)=>{const a=valid(rows,k);return a.length?sum(a,k)/a.length:null;};
+const extreme=(rows,k,max=true)=>{const a=valid(rows,k);return a.length?(max?Math.max:Math.min)(...a.map(r=>r[k])):null;};
+const group=(rows,fn)=>{const m=new Map();rows.forEach(r=>{const k=fn(r);if(!m.has(k))m.set(k,[]);m.get(k).push(r);});return m;};
+const YEARS=[...new Set(DATA.map(year))].sort(), MIN=dayKey(DATA[0]), MAX=dayKey(DATA.at(-1));
+const MAXDIST=Math.ceil(Math.max(...DATA.map(r=>r.distance_km))*100)/100;
+let state={years:new Set(YEARS),category:null,tolerance:2,rows:[],page:1,sort:'fecha_local',direction:-1}, charts=[];
+
+// 2. Filtros: la modalidad se aplica antes de cualquier cálculo o gráfico.
+function init(){
+ if(window.Chart?.defaults)Chart.defaults.font.family='Bahnschrift, Trebuchet MS, Arial, sans-serif';
+ $('years').innerHTML='<button data-year="all">Todos</button>'+YEARS.map(y=>`<button data-year="${y}">${y}</button>`).join('');
+ $('type').innerHTML='<option value="all">Todas las modalidades</option>'+[...new Set(DATA.map(r=>r.modalidad))].map(t=>`<option value="${esc(t)}">${esc(TYPES[t]||t)}</option>`).join('');
+ $('type').value=DATA.some(r=>r.modalidad==='running')?'running':DATA[0].modalidad;
+ ['minDist','maxDist'].forEach(id=>$(id).max=MAXDIST);$('minDist').value=0;$('maxDist').value=MAXDIST;
+ $('from').value=MIN;$('to').value=MAX;
+ const labels=['<5 km','5–10 km','10–15 km','15–21 km','Media maratón','>21 km','Maratón'];
+ $('quick').innerHTML+=labels.map((label,i)=>`<button data-category="${i}" aria-pressed="false">${label}</button>`).join('');
+ $('years').addEventListener('click',e=>{const y=e.target.dataset.year;if(!y)return;selectYear(y);});
+ ['type','from','to'].forEach(id=>$(id).addEventListener('change',update));
+ ['minDist','maxDist'].forEach(id=>$(id).addEventListener('input',()=>{state.category=null;if(+$('minDist').value>+$('maxDist').value){$(id==='minDist'?'maxDist':'minDist').value=$(id).value;}update();}));
+ $('quick').addEventListener('click',e=>{if(e.target.dataset.category===undefined)return;const c=+e.target.dataset.category;state.category=state.category===c?null:c;$('minDist').value=0;$('maxDist').value=MAXDIST;update();});
+ $('reset').onclick=()=>{state.years=new Set(YEARS);state.category=null;state.tolerance=2;$('type').value=DATA.some(r=>r.modalidad==='running')?'running':DATA[0].modalidad;$('from').value=MIN;$('to').value=MAX;$('minDist').value=0;$('maxDist').value=MAXDIST;$('search').value='';update();};
+ $('theme').onclick=()=>{const light=document.documentElement.dataset.theme!=='light';document.documentElement.dataset.theme=light?'light':'dark';$('theme').textContent=light?'☾ Modo oscuro':'☾ Modo oscuro';$('theme').setAttribute('aria-pressed',String(light));renderCharts();};
+ $('search').oninput=()=>{state.page=1;renderTable();};$('pageSize').onchange=()=>{state.page=1;renderTable();};
+ $('prev').onclick=()=>{state.page--;renderTable();};$('next').onclick=()=>{state.page++;renderTable();};
+ $('export').onclick=exportCSV;$('closeDetail').onclick=()=>$('detail').close();
+ $('detail').addEventListener('click',e=>{if(e.target===$('detail'))$('detail').close();});
+ $('source').textContent=`${META.rows} actividades · ${MIN} → ${MAX} · ${META.source}`;
+ setupPages();setupGoals();update();
+}
+function near(d,target){return Math.abs(d-target)<=target*state.tolerance/100+1e-9;}
+// Un clic selecciona un único año; «Todos» restaura el historial completo.
+function selectYear(y){
+ if(y==='all'){state.years=new Set(YEARS);$('from').value=MIN;$('to').value=MAX;}
+ else{
+  state.years=new Set([y]);
+  const selected=[...state.years].sort();$('from').value=`${selected[0]}-01-01`;$('to').value=`${selected.at(-1)}-12-31`;
+ }
+ update();
+}
+function nonTemporal(r){
+ const d=r.distance_km,c=state.category;
+ const category=c===null||[d<5,d>=5&&d<10,d>=10&&d<15,d>=15&&d<=21,near(d,21.0975),d>21,near(d,42.195)][c];
+ return ($('type').value==='all'||r.modalidad===$('type').value)&&d>=+$('minDist').value&&d<=+$('maxDist').value&&category;
+}
+function update(){
+ [...$('years').children].forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.year==='all'?state.years.size===YEARS.length:state.years.has(b.dataset.year))));
+ document.querySelectorAll('[data-category]').forEach(b=>b.setAttribute('aria-pressed',String(+b.dataset.category===state.category)));
+ $('distanceLabel').textContent=`Distancia · ${num(+$('minDist').value,2)}–${num(+$('maxDist').value,2)} km`;
+ const from=$('from').value||MIN,to=$('to').value||MAX,invalid=from>to;
+ $('filterError').hidden=!invalid;$('filterError').textContent=invalid?'La fecha inicial debe ser anterior o igual a la final.':'';
+ state.rows=invalid?[]:DATA.filter(r=>state.years.has(year(r))&&dayKey(r)>=from&&dayKey(r)<=to&&nonTemporal(r));state.page=1;
+ const selected=[...state.years].sort();
+ const windows=selected.map(y=>[from>`${y}-01-01`?from:`${y}-01-01`,to<`${y}-12-31`?to:`${y}-12-31`]).filter(([a,b])=>a<=b);
+ state.windows=windows;
+ const continuous=windows.length&&windows.every((w,i)=>!i||add(windows[i-1][1],1)===w[0]);
+ state.start=windows[0]?.[0];state.end=windows.at(-1)?.[1];state.dayCount=windows.reduce((s,[a,b])=>s+days(b,a)+1,0);
+ state.previous=[];state.previousDays=state.dayCount;state.comparable=false;
+ if(!invalid&&continuous){const end=add(state.start,-1),start=add(end,-state.dayCount+1);state.previous=DATA.filter(r=>nonTemporal(r)&&dayKey(r)>=start&&dayKey(r)<=end);state.comparable=start>=MIN&&end<=MAX;$('comparison').textContent=`Periodo actual: ${state.start} → ${state.end}. Anterior: ${start} → ${end} (${state.dayCount} días). ${state.comparable?'Mismos filtros de modalidad y distancia.':'Comparativa no disponible: el periodo anterior no está cubierto por el historial.'}`;}
+ else $('comparison').textContent='Comparativa no aplicable: selecciona un intervalo continuo de fechas y años.';
+ $('filterSummary').textContent=`${from} → ${to} · ${state.rows.length} carreras`;
+ $('scope').textContent=`${state.rows.length} carreras seleccionadas`;
+ $('modeNote').textContent=$('type').value==='all'?'Todas las modalidades: exterior y cinta se dibujan como series separadas en las relaciones de ritmo, FC y técnica. Los KPIs resumen la mezcla seleccionada.':`Análisis separado · ${TYPES[$('type').value]||$('type').value}. Las comparaciones no controlan recorrido, intensidad ni cambios de reloj.`;
+ renderHero();renderKPIs();renderAvailability();renderCharts();renderHeatmap();renderRecords();renderTops();renderInsights();renderTable();renderMethod();renderGoals();
+}
+
+// Resumen visual autónomo: barras mensuales y días activos, sin objetivos inventados.
+function renderHero(){
+ const r=state.rows,active=new Set(r.map(dayKey)).size,total=state.dayCount,percent=total?active/total*100:0;
+ const months=monthKeys(),groups=group(r,a=>dayKey(a).slice(0,7)),last=months.slice(-12),values=last.map(m=>sum(groups.get(m)||[],'distance_km')??0),max=Math.max(1,...values);
+ const bars=last.map((m,i)=>`<div class="hero-bar" role="img" aria-label="${m}: ${num(values[i],1)} km" title="${m} · ${num(values[i],1)} km"><i style="--height:${values[i]/max*100}%"></i></div>`).join('');
+ const ring=percent/100*276.46;
+ $('heroVisual').innerHTML=`<div class="hero-stats"><div><div class="hero-distance">${num(sum(r,'distance_km')??0,1)} <small>km</small></div><div class="hero-caption">Distancia en tu selección</div></div><div class="consistency-ring" role="img" aria-label="${active} días con carrera de ${total} días seleccionados"><svg viewBox="0 0 100 100" aria-hidden="true"><circle cx="50" cy="50" r="44" fill="none" stroke="var(--line)" stroke-width="6"/><circle cx="50" cy="50" r="44" fill="none" stroke="var(--teal)" stroke-width="6" stroke-linecap="round" stroke-dasharray="${ring} 276.46"/></svg><div class="ring-text">${active}<small>días con carrera<br>de ${total} días</small></div></div></div><div class="hero-bars" aria-label="Volumen mensual de los últimos meses seleccionados">${bars||'<small class="muted">Selecciona un periodo para ver su volumen.</small>'}</div><div class="hero-months"><span>${last[0]||'—'}</span><span>Volumen mensual · km</span><span>${last.at(-1)||'—'}</span></div>`;
+}
+
+// 3. KPIs. Ritmo = tiempo total / km; FC = media por actividad con medición.
+function metrics(rows,dayCount){const km=sum(rows,'distance_km'),s=sum(rows,'duration');return [rows.length,km,s,km?s/km:null,avg(rows,'averageHR'),sum(rows,'elevationGain'),sum(rows,'calories'),extreme(rows,'distance_km'),extreme(rows,'pace_sec_km',false),km&&dayCount?km/(dayCount/7):null];}
+function renderKPIs(){
+ const current=metrics(state.rows,state.dayCount),previous=metrics(state.previous,state.previousDays);
+ const defs=[['Carreras',v=>num(v,0)],['Distancia total',v=>num(v)+' km'],['Tiempo total',durationWords],['Ritmo ponderado',v=>pace(v)+' /km'],['FC media · por sesión',v=>num(v,0)+' bpm'],['Desnivel positivo',v=>num(v,0)+' m'],['Calorías',v=>num(v,0)+' kcal'],['Carrera más larga',v=>num(v,2)+' km'],['Mejor ritmo · sesión',v=>pace(v)+' /km'],['Km por semana',v=>num(v)+' km']];
+ const icons=['↗','⌁','◷','⚡','♡','△','♨','↔','◴','▥'];
+ $('kpis').innerHTML=defs.map(([label,fmt],i)=>{const v=current[i],p=previous[i];let delta='Sin comparativa';if(state.comparable&&finite(v)&&finite(p)&&p!==0){const change=(v-p)/p*100;const cls=i===4?'':(i===3||i===8)?(change<=0?'good':'bad'):(change>=0?'good':'bad');delta=`<span class="${cls}">${change>=0?'▲':'▼'} ${num(Math.abs(change))}%</span> frente al anterior`;}return `<div class="kpi"><div class="kpi-top"><div class="kpi-label">${label}</div><span class="kpi-icon" aria-hidden="true">${icons[i]}</span></div><div class="kpi-value">${finite(v)?fmt(v):'—'}</div><div class="delta">${delta}</div></div>`;}).join('');
+}
+function renderAvailability(){const a=[['FC','averageHR'],['Desnivel','elevationGain'],['Cadencia','averageRunningCadenceInStepsPerMinute'],['Zancada','avgStrideLength'],['TE aeróbico','aerobicTrainingEffect'],['TE anaeróbico','anaerobicTrainingEffect'],['Zonas FC','hrTimeInZone_1']];$('availability').innerHTML=a.map(([n,k])=>`<span>${n}: ${valid(state.rows,k).length}/${state.rows.length}</span>`).join('');}
+
+// 4. Motor de gráficos Chart.js. Cada tooltip y eje declara su unidad.
+// Etiquetas compartidas: todas las barras; extremo y último punto en series densas.
+const MONTH_LABELS={id:'monthValues',afterDatasetsDraw(chart){
+ const {ctx}=chart,opts=chart.options?.plugins?.valueFormat||{};ctx.save();ctx.font='11px Bahnschrift, Trebuchet MS, sans-serif';ctx.textAlign='center';ctx.textBaseline='bottom';ctx.fillStyle=getComputedStyle(document.documentElement).getPropertyValue('--text').trim();
+ const placed=[];
+ chart.data.datasets.forEach((ds,index)=>{
+  if(ds.reference||ds.borderDash||/Tendencia/.test(ds.label))return;
+  const meta=chart.getDatasetMeta(index);if(meta.hidden)return;
+  const type=ds.type||chart.config?.type||'bar',values=ds.data.map(v=>v!==null&&typeof v==='object'?v.y:v),real=values.filter(finite);
+  if(!real.length)return;const peak=opts.paceY?Math.min(...real):Math.max(...real),last=values.findLastIndex(finite);
+  meta.data.forEach((point,i)=>{const v=values[i];if(!finite(v)||v===0||!finite(point.x)||!finite(point.y))return;
+   if(type!=='bar'&&real.length>12&&i!==last&&i!==values.indexOf(peak))return;
+   const text=opts.paceY?pace(v):num(v,type==='bar'&&opts.unit==='carreras'?0:1),w=ctx.measureText?ctx.measureText(text).width:30;
+   let x=point.x,y=point.y-7;if(chart.chartArea){x=Math.max(chart.chartArea.left+w/2,Math.min(chart.chartArea.right-w/2,x));y=Math.max(chart.chartArea.top+12,y);}
+   // En series agrupadas se evita imprimir etiquetas una encima de otra.
+   if(placed.some(p=>Math.abs(p.x-x)<(p.w+w)/2+3&&Math.abs(p.y-y)<13))return;
+   ctx.fillText(text,x,y);placed.push({x,y,w});
+  });
+ });ctx.restore();
+}};
+function chart(parent,id,title,note,type,labels,datasets,options={}){
+ const card=document.createElement('div');card.className='card';card.innerHTML=`<h3>${title}</h3><p>${note}</p><div class="chart-scroll"><div class="plot"><canvas id="${id}" role="img" aria-label="${esc(title)}"></canvas></div></div>`;$(parent).append(card);
+ if(!window.Chart){card.querySelector('.plot').innerHTML='<div class="empty">Gráfico pendiente de cargar Chart.js</div>';return;}
+ if(type==='bar'&&labels.length>16){const plot=card.querySelector('.plot');plot.style.minWidth=Math.max(600,labels.length*52)+'px';plot.parentNode.classList.add('monthly-card');}
+ const css=getComputedStyle(document.documentElement),color=css.getPropertyValue('--muted').trim(),grid=css.getPropertyValue('--line').trim();
+ const {yUnit='',xUnit='',paceY=false,paceX=false,valueLabels=true,...extra}=options;
+ // Barras lima redondeadas, máximo oscuro y referencias con el mismo lenguaje visual.
+ const primary=datasets.filter(ds=>!ds.borderDash&&!/Tendencia|Media/.test(ds.label));
+ const numbers=primary.flatMap(ds=>ds.data.map(v=>v!==null&&typeof v==='object'?v.y:v)).filter(finite);
+ const average=numbers.length?numbers.reduce((a,b)=>a+b,0)/numbers.length:null;
+ const peak=numbers.length?(paceY?Math.min(...numbers):Math.max(...numbers)):null;
+ datasets=datasets.map(ds=>{
+  if(/Media/.test(ds.label))ds={...ds,borderColor:css.getPropertyValue('--text').trim()||color};
+  const kind=ds.type||type;
+  if(kind==='bar'){const vals=ds.data.filter(finite),maximum=vals.length?Math.max(...vals):null;return {...ds,borderWidth:0,borderRadius:6,backgroundColor:ds.data.map(v=>finite(v)&&v===maximum&&maximum>0?'#426b55':ds.backgroundColor&&Array.isArray(ds.backgroundColor)?'#c6ef4e':datasets.filter(d=>(d.type||type)==='bar').length===1?'#c6ef4e':ds.backgroundColor)};}
+  if(!ds.borderDash&&!/Tendencia/.test(ds.label)){
+   const vals=ds.data.map(v=>v!==null&&typeof v==='object'?v.y:v),real=vals.filter(finite),best=real.length?(paceY?Math.min(...real):Math.max(...real)):null;
+   return {...ds,pointBackgroundColor:vals.map(v=>v===best?'#426b55':ds.borderColor),pointRadius:vals.map(v=>v===best?4:kind==='scatter'?3:1.5)};
+  }
+  return ds;
+ });
+ if(id!=='monthly'&&id!=='cumulative'&&finite(average)&&!datasets.some(ds=>ds.reference)){
+  if(type==='scatter'){
+   const xs=primary.flatMap(ds=>ds.data.map(v=>v?.x)).filter(finite);
+   if(xs.length)datasets.push(series(`Media · ${paceY?pace(average)+' /km':num(average)+' '+yUnit}`,[{x:Math.min(...xs),y:average},{x:Math.max(...xs),y:average}],1,{type:'line',borderDash:[6,5],pointRadius:0,reference:true}));
+  }else datasets.push(series(`Media · ${paceY?pace(average)+' /km':num(average)+' '+yUnit}`,labels.map(()=>average),1,{type:'line',borderDash:[6,5],pointRadius:0,reference:true}));
+ }
+ if(id!=='monthly'&&finite(average)){
+  const stat=document.createElement('div');stat.className='chart-stats';stat.innerHTML=`<span>Media de los valores mostrados: ${paceY?pace(average)+' /km':num(average)+' '+yUnit}</span><span class="chart-peak">${paceY?'Ritmo más rápido':'Máximo'}: ${paceY?pace(peak)+' /km':num(peak)+' '+yUnit}</span>`;card.insertBefore(stat,card.querySelector('.chart-scroll'));
+ }
+ const base={responsive:true,maintainAspectRatio:false,animation:false,normalized:false,interaction:{mode:type==='scatter'?'nearest':'index',intersect:type==='scatter'},layout:{padding:{top:22,right:12}},plugins:{valueFormat:{paceY,unit:yUnit},legend:{display:datasets.length>1,labels:{color,boxWidth:10}},tooltip:{callbacks:{label:ctx=>{const raw=ctx.raw;if(raw&&typeof raw==='object'&&raw.tip)return raw.tip;const v=ctx.parsed.y;return `${ctx.dataset.label}: ${paceY?pace(v)+' /km':num(v,1)+(yUnit?' '+yUnit:'')}`;}}}},scales:{x:{grid:{display:false},border:{display:false},ticks:{color,maxTicksLimit:9},title:{display:!!xUnit,text:xUnit,color}},y:{grid:{display:false},border:{display:false},ticks:{color,callback:paceY?v=>pace(v):undefined},reverse:paceY,title:{display:!!yUnit,text:paceY?'Ritmo (mm:ss /km)':yUnit,color}}}};
+ if(type==='scatter'){base.scales.x.type='linear';if(paceX)base.scales.x.ticks.callback=v=>pace(v);}
+ // Eje temporal numérico: una separación de 30 días ocupa 30 veces la de un día.
+ if(type==='line'&&labels.length&&/^\d{4}-\d{2}-\d{2}$/.test(labels[0])){
+  base.scales.x.type='linear';base.scales.x.ticks.callback=v=>add(MIN,Math.round(v));
+  datasets=datasets.map(ds=>({...ds,data:ds.data.map((v,i)=>({x:days(labels[i],MIN),y:v,tip:`${labels[i]} · ${ds.label}: ${v===null?'sin medición':paceY?pace(v)+' /km':num(v)+' '+yUnit}`}))}));
+ }
+ charts.push(new Chart($(id),{type,plugins:valueLabels?[MONTH_LABELS]:[],data:{labels,datasets},options:{...base,...extra,plugins:{...base.plugins,...extra.plugins},scales:{...base.scales,...extra.scales}}}));
+}
+function series(label,data,i=0,extra={}){const c=document.documentElement.dataset.theme==='dark'&&i%COLORS.length===1?'#e3edcf':COLORS[i%COLORS.length];return {label,data,borderColor:c,backgroundColor:c+'b8',borderWidth:2,pointRadius:2,pointHoverRadius:5,borderRadius:5,maxBarThickness:38,tension:.25,spanGaps:false,...extra};}
+function monthKeys(){if(!state.start||!state.end)return [];let a=state.start.slice(0,7),b=state.end.slice(0,7),out=[];while(a<=b){if(state.years.has(a.slice(0,4)))out.push(a);let[y,m]=a.split('-').map(Number);m++;if(m>12){m=1;y++;}a=`${y}-${String(m).padStart(2,'0')}`;}return out;}
+function week(s){const d=date(s);d.setDate(d.getDate()-(d.getDay()+6)%7);return key(d);}
+function weekLabel(s){const thursday=add(s,3),y=+thursday.slice(0,4),first=week(`${y}-01-04`),n=Math.round(days(s,first)/7)+1;return `Semana ${n} · ${s.slice(8)}/${s.slice(5,7)}/${s.slice(0,4)}–${add(s,6).slice(8)}/${add(s,6).slice(5,7)}/${add(s,6).slice(0,4)}`;}
+function weeks(){if(!state.start)return [];const out=[];for(let s=week(state.start);s<=state.end;s=add(s,7)){if(state.windows.some(([a,b])=>s<=b&&add(s,6)>=a))out.push(s);}return out;}
+function timeline(parent,id,title,field,unit,paceAxis=false){
+ const rows=state.rows,labels=[...new Set(rows.map(dayKey))].sort();
+ const types=[...new Set(rows.map(r=>r.modalidad))];
+ const ds=types.map((t,i)=>{const m=group(rows.filter(r=>r.modalidad===t),dayKey);return series(TYPES[t]||t,labels.map(k=>avg(m.get(k)||[],field)),i);});
+ chart(parent,id,title,`Media diaria por modalidad · ${valid(rows,field).length} sesiones con datos`, 'line',labels,ds,{yUnit:unit,paceY:paceAxis});
+}
+function scatter(parent,id,title,x,y,xUnit,yUnit,paceX=false,paceY=false){
+ const types=[...new Set(state.rows.map(r=>r.modalidad))],ds=[];
+ YEARS.forEach((yr,i)=>types.forEach(t=>{const r=state.rows.filter(r=>year(r)===yr&&r.modalidad===t&&finite(r[x])&&finite(r[y]));if(r.length)ds.push(series(`${yr} · ${TYPES[t]||t}`,r.map(a=>({x:a[x],y:a[y],tip:`${dayKey(a)} · ${TYPES[t]||t}: ${paceX?pace(a[x])+' /km':num(a[x])+' '+xUnit} · ${paceY?pace(a[y])+' /km':num(a[y])+' '+yUnit}`})),i,{pointRadius:4,pointStyle:t==='treadmill_running'?'triangle':'circle'}));}));
+ chart(parent,id,title,'Color por año · símbolos/series por modalidad · solo pares completos','scatter',[],ds,{xUnit,yUnit,paceX,paceY});
+}
+function histogram(parent,id,title,field,width,unit,isPace=false){
+ const vals=valid(state.rows,field).map(r=>r[field]),bins=new Map();vals.forEach(v=>{const b=Math.floor(v/width)*width;bins.set(b,(bins.get(b)||0)+1);});
+ const start=vals.length?Math.floor(Math.min(...vals)/width)*width:0,end=vals.length?Math.floor(Math.max(...vals)/width)*width:-1;const keys=[];for(let v=start;v<=end;v+=width)keys.push(v);
+ chart(parent,id,title,`Intervalos de ${isPace?pace(width)+' /km':width+' '+unit} · límite superior excluido`,'bar',keys.map(v=>isPace?`${pace(v)}–${pace(v+width)} /km`:`${num(v,0)}–${num(v+width,0)} ${unit}`),[series('Carreras',keys.map(k=>bins.get(k)||0))],{yUnit:'carreras'});
+}
+function renderCharts(){
+ charts.forEach(c=>c.destroy());charts=[];['volumeCharts','responseCharts','detailCharts'].forEach(id=>$(id).replaceChildren());$('chartWarning').style.display=window.Chart?'none':'block';
+ const rows=state.rows,months=monthKeys(),byMonth=group(rows,r=>dayKey(r).slice(0,7));
+ const monthlyValues=months.map(m=>sum(byMonth.get(m)||[],'distance_km')??0),peak=Math.max(0,...monthlyValues),mean=monthlyValues.length?monthlyValues.reduce((a,b)=>a+b,0)/monthlyValues.length:0;
+ chart('volumeCharts','monthly','Kilómetros por mes',`Media: ${num(mean,1)} km/mes · mes máximo en verde oscuro · meses sin sesiones incluidos · los bordes pueden ser parciales.`,'bar',months,[series('Volumen mensual',monthlyValues,0,{backgroundColor:monthlyValues.map(v=>v===peak&&peak>0?'#426b55':'#c6ef4e'),borderWidth:0,order:2}),series(`Media · ${num(mean,1)} km`,months.map(()=>mean),1,{type:'line',borderDash:[6,5],pointRadius:0,borderWidth:1.5,order:1})],{yUnit:'km',valueLabels:true,layout:{padding:{top:24}},scales:{x:{grid:{display:false},border:{display:false},ticks:{autoSkip:false,maxRotation:45,minRotation:45,color:getComputedStyle(document.documentElement).getPropertyValue('--muted')}},y:{grid:{display:false},border:{display:false},beginAtZero:true,suggestedMax:peak*1.2,title:{display:false},ticks:{display:false}}}});
+ const wk=weeks(),byWeek=group(rows,r=>week(dayKey(r))),totals=wk.map(w=>sum(byWeek.get(w)||[],'distance_km')??0);
+ const rolling=totals.map((v,i)=>i<3||days(wk[i],wk[i-3])!==21?null:totals.slice(i-3,i+1).reduce((a,b)=>a+b,0)/4);
+ chart('volumeCharts','weekly','Kilómetros por semana','Lunes–domingo · media móvil de 4 semanas completas de calendario, con semanas de borde posiblemente parciales.','bar',wk.map(weekLabel),[series('Volumen',totals,0),series('Media móvil · 4 semanas',rolling,1,{type:'line',pointRadius:0})],{yUnit:'km'});
+ const annual=YEARS.filter(y=>state.years.has(y)),season=annual.map((y,i)=>series(y,Array.from({length:12},(_,m)=>sum(byMonth.get(`${y}-${String(m+1).padStart(2,'0')}`)||[],'distance_km')??0),i));
+ chart('volumeCharts','season','Estacionalidad · mes y año','Solo actividades dentro de los filtros. Meses fuera del rango: sin aporte.','bar',['Ene','Feb','Mar','Abr','May','Jun','Jul','Ago','Sep','Oct','Nov','Dic'],season,{yUnit:'km'});
+ // Se usa un calendario bisiesto común para alinear fechas entre años sin desplazar marzo.
+ const calendar=[];for(let d='2000-01-01';d<='2000-12-31';d=add(d,1))calendar.push(d.slice(5));
+ const cumulative=annual.map((y,i)=>{const m=group(rows.filter(r=>year(r)===y),r=>dayKey(r).slice(5));let total=0;return series(y,calendar.map(md=>{const s=`${y}-${md}`;if(md==='02-29'&&new Date(+y,1,29).getMonth()!==1)return null;if(s<state.start||s>state.end)return null;total+=sum(m.get(md)||[],'distance_km')??0;return total;}),i,{pointRadius:0});});
+ chart('volumeCharts','cumulative','Kilómetros acumulados · año contra año','Acumulación de la selección desde enero; fechas alineadas por día y mes.','line',calendar,cumulative,{yUnit:'km'});
+ const weekdays=['Lun','Mar','Mié','Jue','Vie','Sáb','Dom'],counts=Array(7).fill(0),hours=Array(24).fill(0);rows.forEach(r=>{counts[(date(dayKey(r)).getDay()+6)%7]++;hours[+r.fecha_local.slice(11,13)]++;});
+ if(!wk.includes(state.weekSelection))state.weekSelection='all';
+ const weekdayRows=state.weekSelection==='all'?rows:rows.filter(r=>week(dayKey(r))===state.weekSelection),dayCounts=Array(7).fill(0);weekdayRows.forEach(r=>dayCounts[(date(dayKey(r)).getDay()+6)%7]++);
+ chart('volumeCharts','weekday','Carreras por día de la semana',state.weekSelection==='all'?`Total de todo el periodo: ${state.start||'—'} → ${state.end||'—'}. No es una semana concreta.`:weekLabel(state.weekSelection)+' · solo carreras dentro de tus filtros.','bar',weekdays,[series('Carreras',dayCounts)],{yUnit:'carreras'});
+ const picker=document.createElement('select');picker.id='weekPicker';picker.setAttribute('aria-label','Semana del gráfico de días');picker.innerHTML='<option value="all">Todo el periodo seleccionado</option>'+wk.map(w=>`<option value="${w}">${weekLabel(w)}</option>`).join('');picker.value=state.weekSelection;picker.onchange=()=>{state.weekSelection=picker.value;renderCharts();};$('weekday').closest('.card').insertBefore(picker,$('weekday').closest('.chart-scroll'));
+ chart('volumeCharts','hours','A qué hora corres','Hora local de inicio registrada por Garmin.','bar',hours.map((_,i)=>`${String(i).padStart(2,'0')}:00`),[series('Carreras',hours,1)],{yUnit:'carreras'});
+ // Ritmos y regresión lineal OLS por modalidad, con fechas como variable explicativa.
+ const labels=[...new Set(rows.map(dayKey))].sort(),types=[...new Set(rows.map(r=>r.modalidad))],paceDS=[];
+ types.forEach((t,i)=>{const r=rows.filter(r=>r.modalidad===t),g=group(r,dayKey);paceDS.push(series(TYPES[t]||t,labels.map(d=>avg(g.get(d)||[],'pace_sec_km')),i));if(r.length>1){const x=r.map(a=>days(dayKey(a),MIN)),y=r.map(a=>a.pace_sec_km),xm=x.reduce((a,b)=>a+b)/x.length,ym=y.reduce((a,b)=>a+b)/y.length,den=x.reduce((s,v)=>s+(v-xm)**2,0);if(den){const slope=x.reduce((s,v,j)=>s+(v-xm)*(y[j]-ym),0)/den;paceDS.push(series(`Tendencia · ${TYPES[t]||t}`,labels.map(d=>d<dayKey(r[0])||d>dayKey(r.at(-1))?null:ym+slope*(days(d,MIN)-xm)),i,{borderDash:[5,5],pointRadius:0}));}}});
+ chart('responseCharts','pace','Evolución del ritmo','Ritmo de sesión · media diaria · tendencia lineal por modalidad · más rápido arriba.','line',labels,paceDS,{yUnit:'mm:ss /km',paceY:true});
+ if(DATA.some(r=>finite(r.averageHR))){timeline('responseCharts','hr','Frecuencia cardiaca media','averageHR','bpm');scatter('responseCharts','paceHR','Ritmo y frecuencia cardiaca','pace_sec_km','averageHR','Ritmo (mm:ss /km)','bpm',true);const withEfficiency=rows.map(r=>({...r,efficiency:finite(r.averageHR)?r.pace_sec_km/r.averageHR:null}));const gs=types.map((t,i)=>{const m=group(withEfficiency.filter(r=>r.modalidad===t),dayKey);return series(TYPES[t]||t,labels.map(d=>avg(m.get(d)||[],'efficiency')),i);});chart('responseCharts','efficiency','Cociente ritmo / FC','(segundos/km) / bpm. Descriptivo; no es una medida validada de eficiencia ni mejora física.','line',labels,gs,{yUnit:'(s/km) / bpm'});}
+ histogram('detailCharts','distanceHist','Distribución de distancias','distance_km',2,'km');histogram('detailCharts','paceHist','Distribución de ritmos','pace_sec_km',30,'s/km',true);
+ if(DATA.some(r=>finite(r.elevationGain))){chart('detailCharts','elevation','Desnivel positivo por mes','Suma de mediciones disponibles; un mes sin mediciones queda ausente.','bar',months,[series('Ascenso',months.map(m=>sum(byMonth.get(m)||[],'elevationGain')),1)],{yUnit:'m'});scatter('detailCharts','elevationPace','Desnivel y ritmo','elevationGain','pace_sec_km','Desnivel positivo (m)','mm:ss /km',false,true);}
+ if(DATA.some(r=>finite(r.averageRunningCadenceInStepsPerMinute)))timeline('detailCharts','cadence','Cadencia media','averageRunningCadenceInStepsPerMinute','pasos/min');
+ if(DATA.some(r=>finite(r.avgStrideLength)))timeline('detailCharts','stride','Longitud media de zancada','avgStrideLength','cm');
+ const te=['aerobicTrainingEffect','anaerobicTrainingEffect'].filter(k=>DATA.some(r=>finite(r[k])));
+ if(te.length){const bins=['0–<1','1–<2','2–<3','3–<4','4–5'];chart('detailCharts','te','Distribución de Training Effect','Registros disponibles por intervalo. Un valor 0 es un registro válido.','bar',bins,te.map((k,i)=>series(k==='aerobicTrainingEffect'?'Aeróbico':'Anaeróbico',bins.map((_,b)=>rows.filter(r=>finite(r[k])&&r[k]>=b&&(b===4?r[k]<=5:r[k]<b+1)).length),i)),{yUnit:'carreras'});}
+ const zones=Array.from({length:5},(_,i)=>`hrTimeInZone_${i+1}`);if(zones.some(k=>DATA.some(r=>finite(r[k]))))chart('detailCharts','zones','Tiempo registrado en zonas de FC','Sin inventar límites de pulsaciones; las zonas podrían haber cambiado de configuración.','bar',zones.map((_,i)=>`Zona ${i+1}`),[series('Minutos',zones.map(k=>{const s=sum(rows,k);return s===null?null:s/60;}),2)],{yUnit:'min'});
+}
+
+// 5. Calendario nativo: conserva su funcionamiento sin librerías externas.
+function renderHeatmap(){
+ const g=group(state.rows,dayKey),host=$('heatmap');host.replaceChildren();const yrs=YEARS.filter(y=>state.years.has(y));
+ if(!state.rows.length){host.innerHTML='<div class="empty">No hay carreras con estos filtros.</div>';return;}
+ yrs.forEach(y=>{const wrapper=document.createElement('div');wrapper.className='heat-year';wrapper.innerHTML=`<b>${y}</b><div class="heat-scroll"><div class="heat" aria-label="Actividad ${y}"></div></div>`;const grid=wrapper.querySelector('.heat');const offset=(date(`${y}-01-01`).getDay()+6)%7;for(let i=0;i<offset;i++){const s=document.createElement('span');s.className='pad';grid.append(s);}for(let d=`${y}-01-01`;d<=`${y}-12-31`;d=add(d,1)){const a=g.get(d)||[],km=sum(a,'distance_km')??0,cell=document.createElement('button');cell.className='day';cell.dataset.level=km>=20?4:km>=10?3:km>=5?2:km>0?1:0;const text=`${d}: ${a.length} carreras · ${num(km,2)} km`;cell.title=text;cell.setAttribute('aria-label',text);if(a.length)cell.onclick=()=>openDetail(a[0].activityId);grid.append(cell);}host.append(wrapper);});
+}
+// Los mejores tramos registrados se prefieren a estimaciones de sesiones completas.
+const RECORD_DISTANCES=[['5 km',5,'fastestSplit_5000'],['10 km',10,'fastestSplit_10000'],['15 km',15,null],['20 km',20,null],['Media maratón',21.0975,'fastestSplit_21098'],['25 km',25,null],['30 km',30,null],['Maratón',42.195,null]];
+function bestTime(rows,d,split){
+ const measured=split?rows.filter(r=>finite(r[split])&&r[split]>0&&r.distance_km>=d*.98).map(r=>({r,seconds:r[split],method:'Tramo Garmin'})):[];
+ if(measured.length)return measured.sort((a,b)=>a.seconds-b.seconds)[0];
+ const estimated=rows.filter(r=>near(r.distance_km,d)).map(r=>({r,seconds:r.pace_sec_km*d,method:'Estimación · sesión completa'}));
+ return estimated.sort((a,b)=>a.seconds-b.seconds)[0]||null;
+}
+function renderRecords(){
+ $('recordNote').textContent='Mejores tramos registrados por Garmin cuando están disponibles; en su ausencia, estimaciones de actividades completas cercanas a la distancia. Se aplica la selección de fechas y modalidad. Cada tarjeta identifica su método; no se extrapolan distancias largas desde carreras cortas.';
+ $('records').innerHTML=RECORD_DISTANCES.map(([label,d,split])=>{const best=bestTime(state.rows,d,split),r=best?.r;return `<article class="record"><span>${label}</span><strong>${best?time(best.seconds):'—'}</strong><span class="method-tag">${best?best.method:'Sin registro disponible'}</span><small>${best?pace(best.seconds/d)+' /km · '+dayKey(r):'Todavía no hay una actividad que permita calcular esta marca.'}</small><small>${r?num(r.distance_km,2)+' km · '+esc(TYPES[r.modalidad]||r.modalidad):''}</small>${r?`<button data-record-id="${esc(r.activityId)}">Ver sesión ↗</button>`:''}</article>`;}).join('');
+ document.querySelectorAll('[data-record-id]').forEach(b=>b.onclick=()=>openDetail(b.dataset.recordId));
+}
+function renderTops(){const defs=[['Más largas','distance_km',true,v=>num(v,2)+' km'],['Más rápidas · ritmo de sesión','pace_sec_km',false,v=>pace(v)+' /km'],['Más desnivel positivo','elevationGain',true,v=>num(v,0)+' m']];$('tops').innerHTML=defs.map(([title,k,desc,fmt])=>{const rows=valid(state.rows,k).sort((a,b)=>desc?b[k]-a[k]:a[k]-b[k]).slice(0,10);return `<div class="card"><h3>${title}</h3>${rows.length?'<ol>'+rows.map(r=>`<li><a href="#" data-top-id="${esc(r.activityId)}">${dayKey(r)}</a> · ${fmt(r[k])}<br><small>${esc(r.activityName)} · ${esc(TYPES[r.modalidad]||r.modalidad)}</small></li>`).join('')+'</ol>':'<p>Sin mediciones disponibles.</p>'}</div>`;}).join('');document.querySelectorAll('[data-top-id]').forEach(a=>a.onclick=e=>{e.preventDefault();openDetail(a.dataset.topId);});}
+function renderInsights(){
+ const r=state.rows;if(!r.length){$('insights').innerHTML='<li>No hay carreras con estos filtros. Prueba a ampliar el rango.</li>';return;}
+ const months=[...group(r,a=>dayKey(a).slice(0,7))].map(([m,a])=>[m,sum(a,'distance_km')]).sort((a,b)=>b[1]-a[1]),weekdays=['domingo','lunes','martes','miércoles','jueves','viernes','sábado'],freq=Array(7).fill(0);r.forEach(a=>freq[date(dayKey(a)).getDay()]++);const bestday=freq.indexOf(Math.max(...freq)),longest=[...r].sort((a,b)=>b.distance_km-a.distance_km)[0],hr=valid(r,'averageHR'),te=valid(r,'aerobicTrainingEffect');
+ const lines=[`Has registrado ${r.length} carreras y ${num(sum(r,'distance_km'))} km en la selección.`,`El mes de mayor volumen fue ${months[0][0]}, con ${num(months[0][1])} km (puede ser parcial).`,`El día con más sesiones fue el ${weekdays[bestday]}, con ${freq[bestday]} carreras.`,`La sesión más larga fue el ${dayKey(longest)}: ${num(longest.distance_km,2)} km.`,`Hay FC media en ${hr.length} de ${r.length} carreras (${num(hr.length/r.length*100,0)}%).`,`Training Effect aeróbico está disponible en ${te.length} carreras; las diferencias de cobertura pueden reflejar cambios de reloj.`];
+ if(state.comparable&&state.previous.length){const a=metrics(r,state.dayCount),b=metrics(state.previous,state.previousDays);if(b[1])lines.push(`El volumen ${a[1]>=b[1]?'aumentó':'disminuyó'} un ${num(Math.abs((a[1]-b[1])/b[1]*100))}% frente al periodo anterior equivalente.`);if(b[3])lines.push(`El ritmo ponderado fue un ${num(Math.abs((a[3]-b[3])/b[3]*100))}% ${a[3]<b[3]?'más rápido':'más lento'} que en el periodo anterior. La mezcla de sesiones puede explicarlo.`);}
+ else lines.push('El historial no cubre una comparación anterior equivalente, o la selección temporal no es continua.');
+ $('insights').innerHTML=lines.map(s=>`<li>${esc(s)}</li>`).join('');
+}
+
+// 6. Tabla, panel de detalle y CSV: todas las columnas disponibles se pueden ordenar.
+const LABELS={fecha_local:'Fecha local',activityId:'ID Garmin',activityName:'Actividad',modalidad:'Modalidad',distance_km:'Distancia (km)',duration:'Tiempo (h:mm:ss)',pace_sec_km:'Ritmo (/km)',averageHR:'FC media (bpm)',maxHR:'FC máxima (bpm)',elevationGain:'Ascenso (m)',elevationLoss:'Descenso (m)',calories:'Calorías (kcal)',averageRunningCadenceInStepsPerMinute:'Cadencia (pasos/min)',avgStrideLength:'Zancada (cm)',aerobicTrainingEffect:'TE aeróbico',anaerobicTrainingEffect:'TE anaeróbico',hrTimeInZone_1:'Zona FC 1 (s)',hrTimeInZone_2:'Zona FC 2 (s)',hrTimeInZone_3:'Zona FC 3 (s)',hrTimeInZone_4:'Zona FC 4 (s)',hrTimeInZone_5:'Zona FC 5 (s)',distance:'Distancia original (m)',elapsedDuration:'Tiempo transcurrido (h:mm:ss)',movingDuration:'Tiempo en movimiento (h:mm:ss)',pace_min_km:'Ritmo derivado (/km)',duration_min:'Duración (min)'};
+const PRIMARY=['fecha_local','activityName','modalidad','distance_km','duration','pace_sec_km','averageHR','elevationGain','averageRunningCadenceInStepsPerMinute','avgStrideLength'];
+const COLUMNS=[...PRIMARY,...META.columns.filter(c=>!PRIMARY.includes(c))];
+function formatCell(r,k){const v=r[k];if(v===null||v===undefined)return '—';if(k==='pace_sec_km')return pace(v)+' /km';if(k==='pace_min_km')return pace(v*60)+' /km';if(['duration','elapsedDuration','movingDuration'].includes(k))return time(v);if(k==='fecha_local')return v.replace('T',' ');if(k==='modalidad')return TYPES[v]||v;if(typeof v==='boolean')return v?'Sí':'No';return finite(v)?num(v,k==='activityId'?0:2):String(v);}
+function renderTable(){
+ const q=$('search').value.toLocaleLowerCase('es');const rows=state.rows.filter(r=>[r.activityName,r.fecha_local,TYPES[r.modalidad]||r.modalidad,r.activityId].some(v=>String(v).toLocaleLowerCase('es').includes(q)));
+ rows.sort((a,b)=>{const x=a[state.sort],y=b[state.sort];if(x==null)return y==null?0:1;if(y==null)return -1;return state.direction*(finite(x)&&finite(y)?x-y:String(x).localeCompare(String(y),'es',{numeric:true}));});
+ const size=+$('pageSize').value,total=Math.max(1,Math.ceil(rows.length/size));state.page=Math.max(1,Math.min(total,state.page));
+ $('tableHead').innerHTML=COLUMNS.map(k=>`<th scope="col" aria-sort="${state.sort===k?(state.direction===1?'ascending':'descending'):'none'}"><button data-sort="${esc(k)}">${esc(LABELS[k]||k)} ${state.sort===k?(state.direction===1?'↑':'↓'):''}</button></th>`).join('');
+ $('tableBody').innerHTML=rows.slice((state.page-1)*size,state.page*size).map(r=>`<tr data-id="${esc(r.activityId)}" tabindex="0" aria-label="Abrir ${esc(r.activityName)}">${COLUMNS.map(k=>`<td>${esc(formatCell(r,k))}</td>`).join('')}</tr>`).join('')||`<tr><td colspan="${COLUMNS.length}">No hay carreras que coincidan.</td></tr>`;
+ document.querySelectorAll('[data-sort]').forEach(b=>b.onclick=()=>{state.direction=state.sort===b.dataset.sort?-state.direction:1;state.sort=b.dataset.sort;renderTable();});
+ document.querySelectorAll('tr[data-id]').forEach(tr=>{tr.onclick=()=>openDetail(tr.dataset.id);tr.onkeydown=e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();openDetail(tr.dataset.id);}};});
+ $('pageInfo').textContent=`${rows.length} resultados · página ${state.page} de ${total}`;$('prev').disabled=state.page===1;$('next').disabled=state.page===total;
+}
+function openDetail(id){const r=DATA.find(r=>String(r.activityId)===String(id));if(!r)return;$('detailTitle').textContent=r.activityName;$('detailData').innerHTML=COLUMNS.map(k=>`<div><dt>${esc(LABELS[k]||k)}</dt><dd>${esc(formatCell(r,k))}</dd></div>`).join('');if(!$('detail').open)$('detail').showModal();}
+function exportCSV(){
+ // Campos numéricos conservan precisión; los ritmos se exportan formateados.
+ const cell=v=>'"'+String(v??'').replace(/"/g,'""')+'"';
+ const safe=v=>typeof v==='string'&&/^[=+\-@\t\r]/.test(v)?"'"+v:v;
+ const csv=[COLUMNS.map(k=>cell(LABELS[k]||k)).join(';'),...state.rows.map(r=>COLUMNS.map(k=>cell(safe(k==='pace_sec_km'?pace(r[k])+' /km':k==='pace_min_km'?pace(r[k]*60)+' /km':r[k]))).join(';'))].join('\r\n');
+ const url=URL.createObjectURL(new Blob(['\uFEFF'+csv],{type:'text/csv;charset=utf-8'})),a=document.createElement('a');a.href=url;a.download='running_filtrado.csv';a.click();setTimeout(()=>URL.revokeObjectURL(url),1000);
+}
+function renderMethod(){const optional=[['Frecuencia cardiaca','averageHR'],['Desnivel','elevationGain'],['Cadencia','averageRunningCadenceInStepsPerMinute'],['Zancada','avgStrideLength'],['Training Effect aeróbico','aerobicTrainingEffect'],['Training Effect anaeróbico','anaerobicTrainingEffect'],['Zonas de FC','hrTimeInZone_1']];const absent=optional.filter(([,k])=>!DATA.some(r=>finite(r[k]))).map(([n])=>n);$('method').innerHTML=`<p>Fuente: ${esc(META.source)}. ${META.rows} actividades; ${META.excluded} excluidas por modalidad. Modalidades no reconocidas: ${esc(META.unknownTypes.join(', ')||'ninguna')}. ${absent.length?'Gráficos omitidos por falta de datos: '+esc(absent.join(', '))+'.':'Todas las familias de gráficos solicitadas tienen al menos una medición.'}</p><p>Ritmo ponderado: suma de segundos del cronómetro / suma de km. El mejor ritmo corresponde a una sesión completa. La FC media es la media de los promedios de sesión disponibles; no una media de todas las muestras del reloj. Semanas: lunes–domingo. Km/semana: distancia / (días naturales seleccionados / 7), incluidos días sin carreras.</p><p>Las tarjetas sin mediciones muestran —. Las sumas de desnivel y calorías solo incluyen valores presentes; consulta su cobertura. No se rellenan nulos con cero. Los meses/semanas sin sesiones sí tienen 0 km. Los ceros de Training Effect y zonas se conservan.</p><p>Comparativa: intervalo anterior inmediato de igual número de días; mismos filtros no temporales. No se compara si falta cobertura anterior o si los años elegidos crean huecos. Las flechas de volumen indican aumento/disminución, no si el cambio es saludable. La FC se muestra en color neutro porque menor FC no siempre significa mejora.</p><p>Exterior y cinta parten separados. Si seleccionas todas las modalidades, el ritmo, las relaciones de FC y la técnica mantienen series separadas; las tarjetas y los récords resumen lo seleccionado. El cociente ritmo/FC es únicamente descriptivo. Zancada en cm, cadencia en pasos/min, zonas en segundos de origen y minutos en el gráfico.</p><p>Los récords estimados usan sesiones cercanas a cada distancia con margen interno fijo del 2 %; no se usan mejores tramos para extrapolar carreras. Los años y meses pueden ser parciales, no se conocen periodos sin sincronización y los dispositivos o zonas pueden cambiar. No se infiere causalidad ni progreso fisiológico.</p>`;}
+// 7. Páginas locales: cada vista tiene su URL hash y admite Atrás/Adelante.
+const PAGES={resumen:'Resumen',analisis:'Análisis',objetivos:'Objetivos',marcas:'Mejores tiempos',historial:'Historial'};
+function showPage(name){
+ const page=Object.hasOwn(PAGES,name)?name:'resumen';
+ document.querySelectorAll('[data-view]').forEach(el=>el.hidden=el.dataset.view!==page);
+ document.querySelectorAll('[data-route]').forEach(el=>{if(el.dataset.route===page)el.setAttribute('aria-current','page');else el.removeAttribute('aria-current');});
+ $('pageTitle').textContent=PAGES[page];state.view=page;
+ if(typeof window.scrollTo==='function')window.scrollTo({top:0,behavior:'instant'});
+ // Un canvas inicialmente oculto necesita recalcular su tamaño al abrir Análisis.
+ charts.forEach(c=>c.resize());
+}
+function setupPages(){showPage(location.hash.slice(1));window.addEventListener('hashchange',()=>showPage(location.hash.slice(1)));}
+
+// 8. Objetivos editables. Persistencia explícita en JSON, sin localStorage.
+let GOALS=[],nextGoalId=1;
+function setupGoals(){
+ $('goalType').innerHTML='<option value="all">Todas las modalidades</option>'+[...new Set(DATA.map(r=>r.modalidad))].map(t=>`<option value="${esc(t)}">${esc(TYPES[t]||t)}</option>`).join('');
+ const now=new Date(),y=now.getFullYear(),m=now.getMonth();$('goalFrom').value=key(new Date(y,m,1));$('goalTo').value=key(new Date(y,m+1,0));
+ $('goalMetric').value='km';$('goalMetric').onchange=()=>{const metric=$('goalMetric').value,isRace=metric==='race';$('targetLabel').firstChild.textContent=metric==='runs'?'Meta (número de carreras)':metric==='time'||isRace?'Distancia de la carrera (km)':'Meta (km)';$('goalTimeLabel').hidden=metric!=='time'&&!isRace;$('goalTimeText').textContent=isRace?'Tiempo objetivo opcional (h:mm:ss)':'Tiempo objetivo (h:mm:ss)';$('goalTime').required=metric==='time';$('raceLocationLabel').hidden=!isRace;$('goalToText').textContent=isRace?'Fecha de la carrera':'Hasta';$('goalTarget').step=metric==='runs'?'1':'0.01';};
+ $('newRace').onclick=()=>{resetGoalForm();$('goalMetric').value='race';$('goalMetric').onchange();$('goalFormTitle').textContent='Añadir futura carrera';$('goalSubmit').textContent='+ Añadir carrera';$('goalName').focus();};
+ $('goalForm').onsubmit=e=>{e.preventDefault();try{saveGoalFromForm();$('goalError').textContent='';}catch(error){$('goalError').textContent=error.message;}};
+ $('cancelGoal').onclick=resetGoalForm;
+ $('saveGoals').onclick=()=>{downloadJSON({version:1,goals:GOALS},'mis_objetivos_running.json');$('goalStatus').textContent='Archivo descargado. Guárdalo para recuperar tus objetivos.';};
+ $('loadGoals').onchange=async e=>{const file=e.target.files[0];if(!file)return;try{const data=JSON.parse(await file.text());if(data.version!==1||!Array.isArray(data.goals)||data.goals.length>200)throw new Error('Formato de objetivos no válido.');const clean=data.goals.map((g,i)=>validateGoal({...g,id:i+1}));GOALS=clean;nextGoalId=clean.length+1;resetGoalForm();renderGoals();$('goalStatus').textContent=`${clean.length} objetivos cargados.`;}catch(error){$('goalStatus').textContent='No se pudo cargar: '+error.message;}e.target.value='';};
+}
+function validateGoal(g){
+ if(typeof g.name!=='string'||!g.name.trim()||g.name.length>100)throw new Error('Escribe un nombre de hasta 100 caracteres.');
+ if(!['km','runs','longest','time','race'].includes(g.metric)||!finite(g.target)||g.target<=0)throw new Error('La meta debe ser un número mayor que cero.');
+ if(g.metric==='runs'&&!Number.isInteger(g.target))throw new Error('El número de carreras debe ser entero.');
+ const validDate=s=>typeof s==='string'&&/^\d{4}-\d{2}-\d{2}$/.test(s)&&Number.isFinite(Date.parse(s))&&new Date(s+'T12:00:00Z').toISOString().slice(0,10)===s;
+ if(!validDate(g.from)||!validDate(g.to)||g.from>g.to)throw new Error('Revisa las fechas del objetivo.');
+ if(g.type!=='all'&&!DATA.some(r=>r.modalidad===g.type))throw new Error('Modalidad de objetivo no válida.');
+ if(g.metric==='time'&&(!finite(g.seconds)||g.seconds<=0))throw new Error('Introduce el tiempo con formato h:mm:ss, por ejemplo 0:25:00.');
+ if(g.metric==='race'&&g.seconds!=null&&(!finite(g.seconds)||g.seconds<=0))throw new Error('Revisa el tiempo objetivo de la carrera.');
+ if(g.location!=null&&(typeof g.location!=='string'||g.location.length>120))throw new Error('El lugar admite hasta 120 caracteres.');
+ return {id:g.id,name:g.name.trim(),metric:g.metric,target:g.target,from:g.from,to:g.to,type:g.type,seconds:g.metric==='time'||g.metric==='race'?g.seconds:null,location:g.metric==='race'?(g.location||'').trim():'',completed:g.metric==='race'&&g.completed===true};
+}
+function saveGoalFromForm(){
+ const match=$('goalTime').value.match(/^(\d+):([0-5]\d):([0-5]\d)$/),seconds=match?+match[1]*3600+ +match[2]*60+ +match[3]:null;
+ if($('goalTime').value&&!match)throw new Error('Usa h:mm:ss para el tiempo objetivo.');
+ const editing=+$('goalId').value;
+ const g=validateGoal({id:editing||nextGoalId,name:$('goalName').value,metric:$('goalMetric').value,target:+$('goalTarget').value,from:$('goalFrom').value,to:$('goalTo').value,type:$('goalType').value,seconds,location:$('raceLocation').value,completed:GOALS.find(g=>g.id===editing)?.completed||false});
+ if(editing)GOALS=GOALS.map(a=>a.id===editing?g:a);else{GOALS.push(g);nextGoalId++;}
+ resetGoalForm();renderGoals();$('goalStatus').textContent='Objetivo actualizado. Guarda el archivo para conservar los cambios.';
+}
+function resetGoalForm(){$('goalId').value='';$('goalName').value='';$('goalTarget').value='';$('goalTime').value='';$('raceLocation').value='';$('goalMetric').value='km';$('goalMetric').onchange();$('goalFormTitle').textContent='Nuevo objetivo';$('goalSubmit').textContent='+ Crear objetivo';$('cancelGoal').hidden=true;}
+function goalProgress(g){
+ const rows=DATA.filter(r=>dayKey(r)>=g.from&&dayKey(r)<=g.to&&(g.type==='all'||r.modalidad===g.type));
+ let value=0;
+ if(g.metric==='km')value=sum(rows,'distance_km')??0;
+ if(g.metric==='runs')value=rows.length;
+ if(g.metric==='longest')value=extreme(rows,'distance_km')??0;
+ if(g.metric==='time'){const split=RECORD_DISTANCES.find(([,d])=>Math.abs(d-g.target)<.001)?.[2];value=bestTime(rows,g.target,split)?.seconds??null;}
+ if(g.metric==='race'){const match=rows.find(r=>dayKey(r)===g.to&&near(r.distance_km,g.target)&&(!g.seconds||r.duration<=g.seconds));return {value:match?.distance_km??null,achieved:!!match||g.completed===true,percent:match||g.completed?100:0,matched:!!match};}
+ const achieved=g.metric==='time'?finite(value)&&value<=g.seconds:value>=g.target;
+ const ratio=g.metric==='time'?(finite(value)?g.seconds/value:0):value/g.target;
+ return {value,achieved,percent:Math.max(0,Math.min(100,ratio*100))};
+}
+function renderGoals(){
+ renderRaces();
+ const general=GOALS.filter(g=>g.metric!=='race');
+ if(!general.length){$('goalList').innerHTML='<div class="card empty"><h2>Tu próxima meta empieza aquí.</h2><p>Añade tu primer objetivo con el formulario. No hay retos predefinidos ni datos inventados.</p></div>';bindGoalActions();return;}
+ $('goalList').innerHTML=general.map(g=>{const p=goalProgress(g),unit=g.metric==='runs'?'carreras':'km',current=g.metric==='time'?(finite(p.value)?time(p.value):'Sin marca registrada'):num(p.value,g.metric==='runs'?0:1)+' '+unit,target=g.metric==='time'?`${num(g.target,2)} km en ${time(g.seconds)}`:num(g.target,g.metric==='runs'?0:1)+' '+unit;return `<article class="card goal-card"><div class="goal-meta"><span>${esc(TYPES[g.type]||'Todas las modalidades')}</span><span>${p.achieved?'✓ Conseguido':'En progreso'}</span></div><h3>${esc(g.name)}</h3><div class="goal-number">${current}</div><p>Meta: ${target}<br>${g.from} → ${g.to}</p><div class="progress-track" role="progressbar" aria-label="Progreso de ${esc(g.name)}" aria-valuenow="${Math.round(p.percent)}" aria-valuemin="0" aria-valuemax="100"><i style="width:${p.percent}%"></i></div><p>${num(p.percent,0)}% de la meta${g.metric==='time'?' · tiempo objetivo / mejor tiempo registrado o estimado':''}</p><div class="goal-actions"><button data-edit-goal="${g.id}">Editar</button><button data-delete-goal="${g.id}">Eliminar</button></div></article>`;}).join('');
+ bindGoalActions();
+}
+function bindGoalActions(){
+ document.querySelectorAll('[data-edit-goal]').forEach(b=>b.onclick=()=>editGoal(+b.dataset.editGoal));
+ document.querySelectorAll('[data-delete-goal]').forEach(b=>b.onclick=()=>{GOALS=GOALS.filter(g=>g.id!==+b.dataset.deleteGoal);renderGoals();$('goalStatus').textContent='Objetivo eliminado de esta sesión. Guarda para conservar el cambio.';});
+}
+function editGoal(id){const g=GOALS.find(g=>g.id===id);if(!g)return;$('goalId').value=g.id;$('goalName').value=g.name;$('goalMetric').value=g.metric;$('goalMetric').onchange();$('goalTarget').value=g.target;$('goalTime').value=g.seconds?time(g.seconds):'';$('raceLocation').value=g.location||'';$('goalFrom').value=g.from;$('goalTo').value=g.to;$('goalType').value=g.type;$('goalFormTitle').textContent='Editar objetivo';$('goalSubmit').textContent='Guardar cambios';$('cancelGoal').hidden=false;}
+function renderRaces(){
+ const races=GOALS.filter(g=>g.metric==='race').sort((a,b)=>a.to.localeCompare(b.to));
+ $('raceList').innerHTML=races.length?races.map(g=>{const p=goalProgress(g),remaining=days(g.to,key(new Date())),status=p.achieved?'✓ Objetivo conseguido':remaining>0?`Faltan ${remaining} días`:remaining===0?'¡Es hoy!':'Pendiente de confirmar';return `<article class="card goal-card"><div class="goal-meta"><span class="race-tag">Carrera · cuenta como objetivo</span><span>${status}</span></div><h3>${esc(g.name)}</h3><div class="goal-number">${num(g.target,2)} km</div><p>${g.to}${g.location?' · '+esc(g.location):''}<br>${esc(TYPES[g.type]||'Todas las modalidades')}${g.seconds?' · Objetivo: '+time(g.seconds):''}</p><div class="progress-track" role="progressbar" aria-label="Objetivo de carrera" aria-valuenow="${p.percent}" aria-valuemin="0" aria-valuemax="100"><i style="width:${p.percent}%"></i></div><p>${p.matched?'Actividad compatible encontrada el día de la carrera.':g.completed?'Marcada como completada por ti.':'Se completará con una actividad compatible ese día o cuando la confirmes.'}</p><div class="goal-actions"><button data-edit-goal="${g.id}">Editar</button><button data-complete-race="${g.id}">${g.completed?'Desmarcar':'Marcar completada'}</button><button data-delete-goal="${g.id}">Eliminar</button></div></article>`;}).join(''):'<div class="race-empty">Añade las carreras que tienes por delante: nombre, fecha, distancia y, si quieres, lugar y tiempo objetivo. Cada una cuenta como un objetivo.</div>';
+ document.querySelectorAll('[data-complete-race]').forEach(b=>b.onclick=()=>{const g=GOALS.find(g=>g.id===+b.dataset.completeRace);g.completed=!g.completed;renderGoals();$('goalStatus').textContent='Carrera actualizada. Guarda tus objetivos para conservarla.';});
+}
+function downloadJSON(data,filename){const url=URL.createObjectURL(new Blob([JSON.stringify(data,null,2)],{type:'application/json'})),a=document.createElement('a');a.href=url;a.download=filename;a.click();setTimeout(()=>URL.revokeObjectURL(url),1000);}
+init();
+</script>
+</body>
+</html>
